@@ -4,7 +4,7 @@
 #include "entry.h"
 
 typedef struct {
-  struct abb_nodo *arbol;
+  struct abb_nodo *raiz;
 } abb;
 
 struct abb_nodo {
@@ -14,7 +14,7 @@ struct abb_nodo {
 };
 
 void abb_new(abb *a);
-void abb_insertar(abb *a, entry *e);
+void abb_insertar(abb *a, const char *key, void *val, int valsize);
 void* abb_buscar(abb *a, const char *key);
 void abb_eliminar(abb *a, const char *key);
 void abb_dispose(abb *a);
