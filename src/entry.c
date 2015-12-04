@@ -6,9 +6,9 @@
 
 entry *duplicar_entry(entry *e){
   entry *newentry = (entry*)malloc(sizeof(entry));
-  entry->key = strdup(e->key);
-  entry->val = malloc(e->val_size);
-  memcpy(entry->val, e->val, e->val_size);
+  newentry->key = strdup(e->key);
+  newentry->val = malloc(e->val_size);
+  memcpy(newentry->val, e->val, e->val_size);
 
   return newentry;
 }

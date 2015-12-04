@@ -22,7 +22,7 @@ static struct abb_nodo *_abb_insertar(struct abb_nodo *nodo, const char *key, vo
     return n;
   }
   
-  int cmp = strcmp(nodo->e->key, key);
+  int cmp = strcmp(key, nodo->e->key);
   
   if(cmp < 0)
     nodo->izq = _abb_insertar(nodo->izq, key, val, valsize);
