@@ -26,8 +26,8 @@ static struct abb_nodo *_abb_insertar(struct abb_nodo *nodo, const char *key, vo
   
   if(cmp < 0)
     nodo->izq = _abb_insertar(nodo->izq, key, val, valsize);
-  else if(cmp < 0)
-    nodo->der = _abb_insertar(nodo->det, key, val, valsize);
+  else if(cmp > 0)
+    nodo->der = _abb_insertar(nodo->der, key, val, valsize);
   else {
     // cmp es igual a 0. El elemento ya está, return yo mismo.
     return nodo;
@@ -42,7 +42,7 @@ void abb_insertar(abb *a, const char *key, void *val, int valsize){
     exit(-1);
   }
 
-  a->arbol = _abb_insertar(a->raiz, key, val, valsize);
+  a->raiz = _abb_insertar(a->raiz, key, val, valsize);
 }
 
 
@@ -80,7 +80,7 @@ static void _free_abb(struct abb_nodo *nodo){
   if(nodo->der != NULL) free(nodo->der);
 
   free_entry(nodo->e);
-  free(e);
+  free(nodo);
 }
 
 
