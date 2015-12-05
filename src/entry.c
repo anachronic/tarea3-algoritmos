@@ -21,5 +21,6 @@ void free_entry(entry *e){
 void entry_new(entry *e, char *key, void *val, int size){
   e->key = strdup(key);
   e->val = malloc(size);
+  e->val_size = size;
   memcpy(e->val, val, size);
 }

@@ -5,6 +5,12 @@
 #include "abb.h"
 
 
+static int _nodo_es_hoja(struct abb_nodo *nodo){
+  if(nodo == NULL) return 0;
+
+  return nodo->izq == NULL && nodo->der == NULL;
+}
+
 void abb_new(abb *a){
   a->raiz = NULL;
 }
@@ -17,6 +23,7 @@ static struct abb_nodo *_abb_insertar(struct abb_nodo *nodo, const char *key, vo
     n->e = (entry*)malloc(sizeof(entry));
     n->e->key = strdup(key);
     n->e->val = malloc(valsize);
+    n->e->val_size = valsize;
     memcpy(n->e->val, val, valsize);
 
     return n;
@@ -67,6 +74,92 @@ void *abb_buscar(abb *a, const char *key){
 }
 
 
+// Esto elimina un nodo que tenga hijos NULL. NO USAR para nodos internos!!!
+static struct abb_nodo *_abb_eliminar_nodo(struct abb_nodo *nodo){
+  struct abb_nodo *hijo;
+
+  // Eliminar la entry de este nodo
+  // y yo mismo tb digo adios al mundo
+  if(nodo->e != NULL){
+    free_entry(nodo->e);
+    free(nodo->e);
+  }
+
+  // Ahora veo si tengo UN solo hijo
+  if(nodo->izq != NULL && nodo->der == NULL){
+    // solo tengo hijo izquierdo
+    hijo = nodo->izq;
+    free(nodo);
+    return hijo;
+  } else if (nodo->izq == NULL && nodo->der != NULL){
+    // solo tengo hijo derecho
+    hijo = nodo->der;
+    free(nodo);
+    return hijo;
+  }
+
+  // ASUMO que soy hoja y retorno NULL
+  free(nodo);
+  return NULL;
+}
+
+// Retorna el árbol en donde se ha eliminado el hijo más a la izquierda
+// y se ha escrito la entry eliminada en "e".
+static struct abb_nodo *_abb_borrow(struct abb_nodo *nodo, entry *e){
+  if(nodo->izq != NULL){
+    nodo->izq = _abb_borrow(nodo->izq, e);
+    return nodo;
+  }
+
+  // no tengo más hijos izquierdos.
+  entry_new(e, nodo->e->key, nodo->e->val, nodo->e->val_size);
+
+  return _abb_eliminar_nodo(nodo);
+}
+
+static struct abb_nodo *_abb_eliminar(struct abb_nodo *nodo, const char *key){
+  if(nodo == NULL) return NULL;
+
+  // tengo que buscar el nodo donde debo eliminar
+  int cmp = strcmp(key, nodo->e->key);
+  
+  if (cmp > 0) {
+    // busco en el subárbol derecho
+    nodo->der = _abb_eliminar(nodo->der, key);
+    return nodo;
+  } else if (cmp < 0) {
+    // buscar en el subárbol izquierdo
+    nodo->izq = _abb_eliminar(nodo->izq, key);
+    return nodo;
+  }
+  // cmp == 0
+  // lo pillé en este nodo.
+  // si es hoja, lo elimino y se acaba el cuento.
+  // si es interno, tenemos 2 casos
+  //  - si tiene 1 solo hijo eliminamos directamente
+  //  - si tiene 2 hijos -> borrow.
+  if (_nodo_es_hoja(nodo)) return _abb_eliminar_nodo(nodo);
+  else if ((nodo->izq == NULL && nodo->der != NULL) ||
+           (nodo->izq != NULL && nodo->der == NULL)){
+    // tengo 1 solo hijo, elimino directametne
+    return _abb_eliminar_nodo(nodo);
+  }
+
+  // llegamos al peor caso: tenemos 2 hijos.
+  // Primero, borro lo que hay en la entry de este nodo.
+  free_entry(nodo->e);
+  free(nodo->e);
+
+  nodo->e = (entry*)malloc(sizeof(entry));
+
+  // y devuelvo borrow de mi subárbol derecho que siempre existe
+  nodo->der = _abb_borrow(nodo->der, nodo->e);
+  return nodo;
+}
+
+void abb_eliminar(abb *a, const char *key){
+  a->raiz = _abb_eliminar(a->raiz, key);
+}
 
 
 
@@ -80,10 +173,12 @@ static void _free_abb(struct abb_nodo *nodo){
   if(nodo->der != NULL) free(nodo->der);
 
   free_entry(nodo->e);
+  free(nodo->e);
   free(nodo);
 }
 
 
 void abb_dispose(abb *a){
   _free_abb(a->raiz);
+  a->raiz = NULL;
 }

@@ -10,9 +10,7 @@
 #define LARGO_TEST 10
 
 
-int main(int argc, char *argv[]){
-  int total = atoi(argv[1]);
-
+void test_abb(int total){
   abb a;
   abb_new(&a);
 
@@ -34,8 +32,35 @@ int main(int argc, char *argv[]){
     printf("%s\n", found);
   }
 
-  dispose_cadenas(&cs);
+  // eliminar todo.
+  for(k=0; k<total; k++){
+    abb_eliminar(&a, get_cadena(&cs, k));
+  }
 
+  // test eliminar cadena que no existe
+  abb_eliminar(&a, "ansdklmsdk");
+
+
+  puts("No se debe encontrar ningún elemento");
+  // no debo encontrar nada
+  int encontrados = 0;
+  for (k=0; k<total; k++) {
+    char *found = (char*)abb_buscar(&a, get_cadena(&cs, k));
+    if(found != NULL){
+      encontrados++;
+    }
+  }
+
+  printf("Se buscaron %i elementos y se encontraron %i\n", total, encontrados);
+
+  dispose_cadenas(&cs);
+  abb_dispose(&a);
+}
+
+int main(int argc, char *argv[]){
+  int total = atoi(argv[1]);
+
+  test_abb(total);
   
   return 0;
 }
