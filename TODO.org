@@ -1,7 +1,7 @@
 #+TITLE: Tarea 3 - Diseño y Análisis de Algoritmos
 #+AUTHOR: Nicolás Salas V.
 
-* Tarea 3 CC4102 [0%]
+* TODO Tarea 3 CC4102 [0%]
   DEADLINE: <2015-12-11 vie>
 
 ** TODO Código [1/4]
@@ -16,10 +16,10 @@
 - [ ] Eliminación
 - [ ] Inserción
 
-*** TODO Árbol AVL [0/3]
-- [ ] Búsqueda
+*** TODO Árbol AVL [2/3]
+- [X] Búsqueda
 - [ ] Eliminación
-- [ ] Inserción
+- [X] Inserción
 
 *** TODO Árbol de Van Emde Boas [0/3]
 - [ ] Búsqueda

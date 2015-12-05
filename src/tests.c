@@ -24,13 +24,14 @@ void test_abb(int total){
     abb_insertar(&a, get_cadena(&cs, k), "cadena", 7);
   }
 
+  int encontrados = 0;
   for (k=0; k<total; k++) {
     char *found = (char*)abb_buscar(&a, get_cadena(&cs, k));
     if(found == NULL){
       printf("Warning: No se encontró %s\n", get_cadena(&cs, k));
       continue;
     }
-    printf("%s\n", found);
+    encontrados++;
   }
 
   // eliminar todo.
@@ -44,7 +45,6 @@ void test_abb(int total){
 
   puts("No se debe encontrar ningún elemento");
   // no debo encontrar nada
-  int encontrados = 0;
   for (k=0; k<total; k++) {
     char *found = (char*)abb_buscar(&a, get_cadena(&cs, k));
     if(found != NULL){
