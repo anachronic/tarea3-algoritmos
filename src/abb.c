@@ -169,9 +169,6 @@ static void _free_abb(struct abb_nodo *nodo){
   _free_abb(nodo->izq);
   _free_abb(nodo->der);
 
-  if(nodo->izq != NULL) free(nodo->izq);
-  if(nodo->der != NULL) free(nodo->der);
-
   free_entry(nodo->e);
   free(nodo->e);
   free(nodo);

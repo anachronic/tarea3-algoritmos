@@ -57,10 +57,50 @@ void test_abb(int total){
   abb_dispose(&a);
 }
 
-int main(int argc, char *argv[]){
-  int total = atoi(argv[1]);
+void abb_manual(){
+  abb a;
+  abb_new(&a);
 
-  test_abb(total);
+  puts("Insertar X, W, Y K");
+  abb_insertar(&a, "X", "x", 2);
+  abb_insertar(&a, "W", "w", 2);
+  abb_insertar(&a, "Y", "y", 2);
+  abb_insertar(&a, "K", "k", 2);
+
+  puts("Eliminar X");
+  abb_eliminar(&a, "X");
+
+  puts("Buscar X W Y K");
+
+  printf("Buscar X: ");
+  if(abb_buscar(&a, "X") != NULL) puts("encontrado");
+  else puts("no encontrado");
+
+  printf("Buscar Y: ");
+  if(abb_buscar(&a, "Y") != NULL) puts("encontrado");
+  else puts("no encontrado");
+
+  printf("Buscar W: ");
+  if(abb_buscar(&a, "W") != NULL) puts("encontrado");
+  else puts("no encontrado");
+
+  printf("Buscar K: ");
+  if(abb_buscar(&a, "K") != NULL) puts("encontrado");
+  else puts("no encontrado");
+
+  puts("Resultado esperado: No encontrar X. Encontrar Y W K");
+  abb_dispose(&a);
+}
+
+int main(int argc, char *argv[]){
+  if(argc > 1){
+    int total = atoi(argv[1]);
+    test_abb(total);
+
+    return 0;
+  }
+
+  abb_manual();
   
   return 0;
 }
