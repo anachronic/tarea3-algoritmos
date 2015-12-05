@@ -4,12 +4,12 @@
 * Tarea 3 CC4102 [0%]
   DEADLINE: <2015-12-11 vie>
 
-** Código [0/4]
+** TODO Código [1/4]
 
-*** TODO ABB [2/3]
+*** DONE ABB [3/3]
 - [X] Búsqueda
 - [X] Inserción
-- [ ] Eliminación
+- [X] Eliminación
 
 *** TODO Splay Tree [0/3]
 - [ ] Búsqueda
@@ -26,7 +26,7 @@
 - [ ] Eliminación
 - [ ] Inserción
 
-** [0%] Informe
+** TODO Informe [0%]
 - [ ] Introducción
 - [ ] Hipótesis
 - [ ] Diseño Experimental
