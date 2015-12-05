@@ -4,7 +4,7 @@
 * TODO Tarea 3 CC4102 [0%]
   DEADLINE: <2015-12-11 vie>
 
-** TODO Código [1/4]
+** TODO Código [2/4]
 
 *** DONE ABB [3/3]
 - [X] Búsqueda
@@ -16,9 +16,9 @@
 - [ ] Eliminación
 - [ ] Inserción
 
-*** TODO Árbol AVL [2/3]
+*** DONE Árbol AVL [3/3]
 - [X] Búsqueda
-- [ ] Eliminación
+- [X] Eliminación
 - [X] Inserción
 
 *** TODO Árbol de Van Emde Boas [0/3]

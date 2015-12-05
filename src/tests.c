@@ -8,8 +8,7 @@
 #include "splaytree.h"
 #include "cadenas.h"
 
-#define LARGO_TEST 10
-
+#define ELIMINAR 2
 
 void test_abb(int total){
   abb a;
@@ -93,8 +92,16 @@ void abb_manual(){
   abb_dispose(&a);
 }
 
+char* _debug_print_avl(struct avl_nodo *n){
+  if(n == NULL) return "";
+  char *buffer = malloc(2000);
 
-void test_avl(int total){
+  sprintf(buffer, "izquierdo={%s}\tnodo={%s}\tderecho={%s}", _debug_print_avl(n->izq), n->e->key, _debug_print_avl(n->der));
+  return buffer;
+}
+
+
+void test_avl(int total, int eliminar){
   avl a;
   avl_new(&a);
 
@@ -122,12 +129,37 @@ void test_avl(int total){
 
   printf("Encontrados %i elementos\n", encontrados);
 
+  printf("\nEliminar %i cadenas\n", eliminar);
+  for (k=0; k<eliminar; k++) {
+    char *cadena = get_cadena(&cs, k);
+    avl_eliminar(&a, cadena);
+  }
+  printf("Se eliminaron %i cadenas\n", eliminar);
+  puts("Volver a buscar todas las cadenas");
+
+  encontrados = 0;
+  for (k=0; k<cs.num_elems; k++) {
+    char *cadena = get_cadena(&cs, k);
+    void *found = avl_buscar(&a, cadena);
+
+    if(found != NULL){
+      encontrados++;
+      if (k<eliminar) {
+        printf("Warning: No se debería haber encontrado %s", (char*)found);
+      }
+    }
+  }
+  printf("Se espera encontrar %i cadenas\n", (cs.num_elems - eliminar));
+  printf("Encontradas %i\n", encontrados);
+
+
   dispose_cadenas(&cs);
   avl_dispose(&a);
 
 }
 
 int main(int argc, char *argv[]){
+  srand48(0);
   if(argc > 1){
     int total = atoi(argv[1]);
 
@@ -137,7 +169,9 @@ int main(int argc, char *argv[]){
 
     puts("");
     puts("Iniciando test AVL");
-    test_avl(total);
+    if(argc > 2){
+      test_avl(total, atoi(argv[2]));
+    } else test_avl(total, 10);
     puts("Terminar test AVL");
     
 

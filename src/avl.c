@@ -127,7 +127,94 @@ void avl_insertar(avl* a, const char *key, void *val, int valsize) {
 
 /*
   =================== FIN Inserción
+  =================== Inicio Eliminación
+  La eliminación es bastante parecida a la del abb (ver abb.c, que tiene más comentarios)
+  Lo único que cambia es que cada llamada recursiva retorna balancear del nodo donde se borró.
 */
+// Elimina el nodo y retorna el nuevo árbol
+static struct avl_nodo *_avl_eliminar_nodo(struct avl_nodo *nodo){
+  struct avl_nodo *izquierdo;
+  struct avl_nodo *derecho;
+
+  if(nodo == NULL) return NULL;
+
+  izquierdo = nodo->izq;
+  derecho = nodo->der;
+
+  // elimino la entry
+  if(nodo->e != NULL){
+    free_entry(nodo->e);
+    free(nodo->e);
+  }
+
+  free(nodo);
+
+  if(izquierdo != NULL && derecho == NULL) return izquierdo;
+  else if (izquierdo == NULL && derecho != NULL) return derecho;
+
+  // El nodo es Hoja.
+  return NULL;
+}
+
+static struct avl_nodo *_rebalancear(struct avl_nodo *nodo){
+  if(nodo == NULL) return NULL;
+
+  nodo->izq = _rebalancear(nodo->izq);
+  return _balancear(nodo);
+}
+
+static struct avl_nodo *_avl_borrow(struct avl_nodo *nodo, entry *e){
+  if (nodo->izq != NULL){
+    nodo->izq = _avl_borrow(nodo->izq, e);
+    return nodo;
+  }
+
+  // no hay hijos izquierdos
+  entry_new(e, nodo->e->key, nodo->e->val, nodo->e->val_size);
+  return _avl_eliminar_nodo(nodo);
+}
+
+// igual a eliminar en ABB. Salvo que retornamos el nodo balanceado.
+static struct avl_nodo *_avl_eliminar(struct avl_nodo *nodo, const char *key){
+  if(nodo == NULL) return NULL;
+
+  int cmp = strcmp(key, nodo->e->key);
+
+  if(cmp > 0)
+    nodo->der = _avl_eliminar(nodo->der, key);
+  else if(cmp < 0)
+    nodo->izq = _avl_eliminar(nodo->izq, key);
+  else {
+    // pillé la key en este nodo
+    free_entry(nodo->e);
+    free(nodo->e);
+
+    // si el nodo tiene un solo hijo lo retorno.
+    // Note que al borrar un nodo con hijos <= 1
+    // el padre debe BALANCEAR (en contraposición con rebalancear)
+    // el nodo.
+    if(nodo->der == NULL){
+      struct avl_nodo *izquierdo = nodo->izq;
+      free(nodo);
+      return izquierdo;
+    }
+
+    nodo->e = malloc(sizeof(entry));
+
+    nodo->der = _avl_borrow(nodo->der, nodo->e);
+
+    // al hacer brrow hay que rebalancear
+    // NOTA: _balancear es O(1) y _rebalancear es O(h) con h: altura del nodo.
+    nodo->der = _rebalancear(nodo->der);
+  }
+
+  // retorno el arbol rebalanceado
+  return _balancear(nodo);
+}
+
+void avl_eliminar(avl *a, const char *key){
+  a->raiz = _avl_eliminar(a->raiz, key);
+}
 
 
 // FREE AVL
