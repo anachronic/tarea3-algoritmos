@@ -5,3 +5,5 @@ out
 *.o
 *~
 #*
+/.#TODO.org
+tarea3
