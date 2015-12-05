@@ -3,6 +3,7 @@
 
 #include "entry.h"
 
+// patrón Composite. l0l
 typedef struct {
   struct avl_nodo *raiz;
 } avl;

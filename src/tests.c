@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "vanemdeboas.h"
 #include "abb.h"
@@ -92,10 +93,53 @@ void abb_manual(){
   abb_dispose(&a);
 }
 
+
+void test_avl(int total){
+  avl a;
+  avl_new(&a);
+
+  struct cadena_struct cs;
+  crear_cadenas(&cs, total);
+
+  printf("Insertar %i elementos en un AVL\n", total);
+  
+  int k;
+  for(k=0; k<cs.num_elems; k++){
+    char *cadena = get_cadena(&cs, k);
+    avl_insertar(&a, cadena, cadena, strlen(cadena) + 1);
+  }
+
+  printf("Buscar %i elementos en un AVL\n", cs.num_elems);
+  int encontrados = 0;
+  for (k=0; k<cs.num_elems; k++) {
+    char *found = (char*)avl_buscar(&a, get_cadena(&cs, k));
+    if(found == NULL){
+      printf("Warning: No se encontró %s\n", get_cadena(&cs, k));
+      continue;
+    }
+    encontrados++;
+  }
+
+  printf("Encontrados %i elementos\n", encontrados);
+
+  dispose_cadenas(&cs);
+  avl_dispose(&a);
+
+}
+
 int main(int argc, char *argv[]){
   if(argc > 1){
     int total = atoi(argv[1]);
+
+    puts("Iniciando test ABB");
     test_abb(total);
+    puts("Terminar test ABB");
+
+    puts("");
+    puts("Iniciando test AVL");
+    test_avl(total);
+    puts("Terminar test AVL");
+    
 
     return 0;
   }
