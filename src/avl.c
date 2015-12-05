@@ -9,11 +9,6 @@ void avl_new(avl *a){
 }
 
 
-void avl_insertar(avl* a, const char *key, void *val, int valsize) {
-  return;
-}
-
-
 static void *_avl_buscar(struct avl_nodo *nodo, const char *key){
   if(nodo == NULL) return NULL;
 
@@ -31,3 +26,20 @@ void *avl_buscar(avl* a, const char *key) {
 }
 
 
+static struct avl_nodo *_avl_insertar(struct avl_nodo *nodo, const char *key, void *val, int valsize, int altura){
+  if (nodo == NULL) {
+    struct avl_nodo *n = malloc(sizeof(struct avl_nodo));
+    n->der = NULL;
+    n->izq = NULL;
+    n->e = malloc(sizeof(entry));
+    entry_new(n->e, key, val, valsize);
+    n->altura = altura;
+    return n;
+  }
+
+  
+}
+
+void avl_insertar(avl* a, const char *key, void *val, int valsize) {
+  
+}

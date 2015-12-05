@@ -18,7 +18,7 @@ void free_entry(entry *e){
   free(e->key);
 }
 
-void entry_new(entry *e, char *key, void *val, int size){
+void entry_new(entry *e, const char *key, void *val, int size){
   e->key = strdup(key);
   e->val = malloc(size);
   e->val_size = size;
