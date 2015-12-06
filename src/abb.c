@@ -36,7 +36,8 @@ static struct abb_nodo *_abb_insertar(struct abb_nodo *nodo, const char *key, vo
   else if(cmp > 0)
     nodo->der = _abb_insertar(nodo->der, key, val, valsize);
   else {
-    // cmp es igual a 0. El elemento ya está, return yo mismo.
+    // cmp es igual a 0. El elemento ya está, lo reemplazo.
+    entry_replace_val(nodo->e, val, valsize);
     return nodo;
   }
 

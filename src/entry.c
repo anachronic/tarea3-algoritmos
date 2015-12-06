@@ -26,6 +26,8 @@ void entry_new(entry *e, const char *key, void *val, int size){
 }
 
 void entry_replace_val(entry *e, void *val, int valsize){
+  free(e->val);
+  e->val = malloc(valsize);
   e->val_size = valsize;
   memcpy(e->val, val, valsize);
 }

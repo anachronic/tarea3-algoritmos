@@ -116,6 +116,12 @@ static struct avl_nodo *_avl_insertar(struct avl_nodo *nodo, const char *key, vo
 
   if (cmp < 0) nodo->izq = _avl_insertar(nodo->izq, key, val, valsize);
   else if(cmp > 0) nodo->der = _avl_insertar(nodo->der, key, val, valsize);
+  else {
+    // cmp == 0
+    // el elemento ya está: lo reemplazo por lo nuevo y no balanceo.
+    entry_replace_val(nodo->e, val, valsize);
+    return nodo;
+  }
 
   // finalmente balanceamos el AVL
   return _balancear(nodo);
