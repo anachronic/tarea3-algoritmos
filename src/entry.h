@@ -10,5 +10,6 @@ typedef struct pair_entry{
 entry *duplicar_entry(entry *e);
 void free_entry(entry *e);
 void entry_new(entry *e, const char *key, void *val, int size);
+void entry_replace_val(entry *e, void *val, int valsize);
 
 #endif //TAREA3_ALGORITMOS_ENTRY_H

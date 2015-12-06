@@ -99,6 +99,63 @@ static struct splay_nodo *_splay(struct splay_nodo *nodo, const char *key){
   if(nodo->der == NULL) return nodo;
   return _zag(nodo);
 }
+/*
+  ============================== FIN Operaciones intrínsecas del Splay Tree
+*/
+
+void *splaytree_buscar(splaytree *s, const char *key){
+  // Dejo el elemento en la raíz (si es que está)
+  s->raiz = _splay(s->raiz, key);
+  if(strcmp(key, s->raiz->e->key) == 0) return s->raiz->e->val;
+
+  // no está...
+  return NULL;
+}
+
+// Inserta el nodo tal cual en un ABB. Se deja la responsabilidad de hacer splay
+// a la función que llama a esta (ie: splaytree_insertar. Note que no está el _)
+struct splay_nodo *_splaytree_insertar(struct splay_nodo *nodo, const char *key, void *val, int valsize){
+  if(nodo == NULL){
+    struct splay_nodo *n = malloc(sizeof(struct splay_nodo));
+    n->izq = NULL;
+    n->der = NULL;
+    n->e = malloc(sizeof(entry));
+    entry_new(n->e, key, val, valsize);
+    return n;
+  }
+
+  int cmp = strcmp(key, nodo->e->key);
+  
+  // si ya está, la reemplazo.
+  if (cmp == 0){
+    entry_replace_val(nodo->e, val, valsize);
+    return nodo;
+  }
+
+  if(cmp < 0) nodo->izq = _splaytree_insertar(nodo->izq, key, val, valsize);
+  else nodo->der = _splaytree_insertar(nodo->der, key, val, valsize);
+
+  return nodo;
+}
+
+void splaytree_insertar(splaytree *s, const char *key, void *val, int valsize){
+  s->raiz = _splaytree_insertar(s->raiz, key, val, valsize);
+  s->raiz = _splay(s->raiz, key);
+}
 
 
+void _free_splaytree(struct splay_nodo *nodo){
+  if(nodo == NULL) return;
 
+  _free_splaytree(nodo->izq);
+  _free_splaytree(nodo->der);
+
+  free_entry(nodo->e);
+  free(nodo->e);
+  free(nodo);
+}
+
+void splaytree_dispose(splaytree *s){
+  _free_splaytree(s->raiz);
+  s->raiz = NULL;
+}

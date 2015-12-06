@@ -3,6 +3,10 @@
 
 #include "entry.h"
 
+// Fuentes para entender los sources:
+// (1): http://www.geeksforgeeks.org/splay-tree-set-1-insert/
+// (2): http://algs4.cs.princeton.edu/33balanced/SplayBST.java.html
+
 typedef struct {
   struct splay_nodo *raiz;
 } splaytree;

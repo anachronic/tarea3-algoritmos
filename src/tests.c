@@ -158,6 +158,62 @@ void test_avl(int total, int eliminar){
 
 }
 
+void test_splay(int total, int eliminar){
+  splaytree s;
+  splaytree_new(&s);
+
+  struct cadena_struct cs;
+  crear_cadenas(&cs, total);
+
+  printf("Insertar %i elementos en un Splay Tree\n", total);
+  
+  int k;
+  for(k=0; k<cs.num_elems; k++){
+    char *cadena = get_cadena(&cs, k);
+    splaytree_insertar(&s, cadena, cadena, strlen(cadena) + 1);
+  }
+
+  printf("Buscar %i elementos en un Splay Tree\n", cs.num_elems);
+  int encontrados = 0;
+  for (k=0; k<cs.num_elems; k++) {
+    char *found = (char*)splaytree_buscar(&s, get_cadena(&cs, k));
+    if(found == NULL){
+      printf("Warning: No se encontró %s\n", get_cadena(&cs, k));
+      continue;
+    }
+    encontrados++;
+  }
+
+  printf("Encontrados %i elementos\n", encontrados);
+  /*
+  printf("\nEliminar %i cadenas\n", eliminar);
+  for (k=0; k<eliminar; k++) {
+    char *cadena = get_cadena(&cs, k);
+    splaytree_eliminar(&a, cadena);
+  }
+  printf("Se eliminaron %i cadenas\n", eliminar);
+  puts("Volver a buscar todas las cadenas");
+
+  encontrados = 0;
+  for (k=0; k<cs.num_elems; k++) {
+    char *cadena = get_cadena(&cs, k);
+    void *found = splaytree_buscar(&a, cadena);
+
+    if(found != NULL){
+      encontrados++;
+      if (k<eliminar) {
+        printf("Warning: No se debería haber encontrado %s", (char*)found);
+      }
+    }
+  }
+  printf("Se espera encontrar %i cadenas\n", (cs.num_elems - eliminar));
+  printf("Encontradas %i\n", encontrados);
+  */
+
+  dispose_cadenas(&cs);
+  splaytree_dispose(&s);
+}
+
 int main(int argc, char *argv[]){
   srand48(0);
   if(argc > 1){
@@ -174,6 +230,12 @@ int main(int argc, char *argv[]){
     } else test_avl(total, 10);
     puts("Terminar test AVL");
     
+    puts("");
+    puts("Iniciar test Splay Tree");
+    if(argc > 2){
+      test_splay(total, atoi(argv[2]));
+    } else test_splay(total, 10);
+    puts("Terminar Test Splay Tree");
 
     return 0;
   }

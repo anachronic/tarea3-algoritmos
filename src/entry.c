@@ -24,3 +24,8 @@ void entry_new(entry *e, const char *key, void *val, int size){
   e->val_size = size;
   memcpy(e->val, val, size);
 }
+
+void entry_replace_val(entry *e, void *val, int valsize){
+  e->val_size = valsize;
+  memcpy(e->val, val, valsize);
+}
