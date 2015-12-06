@@ -19,5 +19,6 @@ void crear_cadenas(struct cadena_struct *cs, int size);
 char *get_cadena(struct cadena_struct *cs, int k);
 void eliminar_cadena(struct cadena_struct *cs, int k);
 void dispose_cadenas(struct cadena_struct *cs);
+void eliminar_duplicados(struct cadena_struct *cs);
 
 #endif //TAREA2_ALGORITMOS_CADENAS_H

@@ -9,6 +9,33 @@ static long intrand(long max){
   return (long)(drand48() * max);
 }
 
+// cuadrático. whatever. no voy a andar haciendo hashsets...
+void eliminar_duplicados(struct cadena_struct *cs){
+  int k = 0;
+  int i = 0;
+
+  while(k < cs->num_elems){
+    char *esta = get_cadena(cs, k);
+
+    i=k+1;
+    while(i < cs->num_elems){
+      // si cadenas[i] es igual, la sacamos
+      if(strcmp(cs->cadenas[i], esta) == 0){
+        free(cs->cadenas[i]);
+        cs->num_elems--;
+        if(cs->num_elems - i > 0)
+          memmove(cs->cadenas + i, cs->cadenas + i + 1, sizeof(char*) * (cs->num_elems - i));
+
+        // no aumentamos i. Disminuyó el tamaño
+        continue;
+      }
+      i++;
+    }
+
+    k++;
+  }
+}
+
 
 char base_rand(){
   double r = drand48();
