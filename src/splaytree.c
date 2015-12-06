@@ -74,7 +74,7 @@ static struct splay_nodo *_splay(struct splay_nodo *nodo, const char *key){
   }
 
   // cmp > 0
-  if(nodo->der == NULL) return NULL;
+  if(nodo->der == NULL) return nodo;
   
   int cmp3 = strcmp(key, nodo->der->e->key);
   if(cmp3 > 0){
@@ -106,6 +106,7 @@ static struct splay_nodo *_splay(struct splay_nodo *nodo, const char *key){
 void *splaytree_buscar(splaytree *s, const char *key){
   // Dejo el elemento en la raíz (si es que está)
   s->raiz = _splay(s->raiz, key);
+  if(s->raiz == NULL) return NULL;
   if(strcmp(key, s->raiz->e->key) == 0) return s->raiz->e->val;
 
   // no está...
@@ -158,4 +159,99 @@ void _free_splaytree(struct splay_nodo *nodo){
 void splaytree_dispose(splaytree *s){
   _free_splaytree(s->raiz);
   s->raiz = NULL;
+}
+
+
+/*
+  ====================== Eliminación en un Splay Tree
+  La haremos de la misma forma que en un ABB. Por qué? Para mantener la filosofía del splay Tree.
+  Otra forma posible es hacerle splay al árbol, borrar la raíz y hacer "merge", pero ello viola
+  la política de acceso en el Splay Tree.
+  En resumen, la eliminación es como en un ABB, y no tengo asco en decir que copy-pasteé lo
+  de abb.c (ps: esto lo discutiré en el informe.)
+*/
+
+static struct splay_nodo *_splaytree_eliminar_nodo(struct splay_nodo *nodo){
+  struct splay_nodo *hijo;
+
+  // Eliminar la entry de este nodo
+  // y yo mismo tb digo adios al mundo
+  if(nodo->e != NULL){
+    free_entry(nodo->e);
+    free(nodo->e);
+  }
+
+  // Ahora veo si tengo UN solo hijo
+  if(nodo->izq != NULL && nodo->der == NULL){
+    // solo tengo hijo izquierdo
+    hijo = nodo->izq;
+    free(nodo);
+    return hijo;
+  } else if (nodo->izq == NULL && nodo->der != NULL){
+    // solo tengo hijo derecho
+    hijo = nodo->der;
+    free(nodo);
+    return hijo;
+  }
+
+  // ASUMO que soy hoja y retorno NULL
+  free(nodo);
+  return NULL;
+}
+
+static struct splay_nodo *_splaytree_borrow(struct splay_nodo *nodo, entry *e){
+  if(nodo->izq != NULL){
+    nodo->izq = _splaytree_borrow(nodo->izq, e);
+    return nodo;
+  }
+
+  // no tengo más hijos izquierdos.
+  entry_new(e, nodo->e->key, nodo->e->val, nodo->e->val_size);
+
+  return _splaytree_eliminar_nodo(nodo);
+}
+
+static struct splay_nodo *_splaytree_eliminar(struct splay_nodo *nodo, const char *key){
+  if(nodo == NULL) return NULL;
+
+  // tengo que buscar el nodo donde debo eliminar
+  int cmp = strcmp(key, nodo->e->key);
+  
+  if (cmp > 0) {
+    // busco en el subárbol derecho
+    nodo->der = _splaytree_eliminar(nodo->der, key);
+    return nodo;
+  } else if (cmp < 0) {
+    // buscar en el subárbol izquierdo
+    nodo->izq = _splaytree_eliminar(nodo->izq, key);
+    return nodo;
+  }
+  // cmp == 0
+  // lo pillé en este nodo.
+  // si es hoja, lo elimino y se acaba el cuento.
+  // si es interno, tenemos 2 casos
+  //  - si tiene 1 solo hijo eliminamos directamente
+  //  - si tiene 2 hijos -> borrow.
+  // En retrospectiva esta condición es !(nodo->izq != NULL && nodo->der != NULL)... gg
+  if ((nodo->izq == NULL && nodo->der != NULL) ||
+      (nodo->izq != NULL && nodo->der == NULL) ||
+      (nodo->izq == NULL && nodo->der == NULL)){
+    // tengo 1 solo hijo, elimino directametne
+    return _splaytree_eliminar_nodo(nodo);
+  }
+
+  // llegamos al peor caso: tenemos 2 hijos.
+  // Primero, borro lo que hay en la entry de este nodo.
+  free_entry(nodo->e);
+  free(nodo->e);
+
+  nodo->e = (entry*)malloc(sizeof(entry));
+
+  // y devuelvo borrow de mi subárbol derecho que siempre existe
+  nodo->der = _splaytree_borrow(nodo->der, nodo->e);
+  return nodo;
+}
+
+void splaytree_eliminar(splaytree *s, const char *key){
+  s->raiz = _splaytree_eliminar(s->raiz, key);
 }
