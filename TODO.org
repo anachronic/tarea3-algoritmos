@@ -11,10 +11,10 @@
 - [X] Inserción
 - [X] Eliminación
 
-*** TODO Splay Tree [0/3]
-- [ ] Búsqueda
+*** TODO Splay Tree [2/3]
+- [X] Búsqueda
 - [ ] Eliminación
-- [ ] Inserción
+- [X] Inserción
 
 *** DONE Árbol AVL [3/3]
 - [X] Búsqueda
