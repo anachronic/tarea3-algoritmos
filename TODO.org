@@ -4,16 +4,16 @@
 * TODO Tarea 3 CC4102 [0%]
   DEADLINE: <2015-12-11 vie>
 
-** TODO Código [2/4]
+** TODO Código [3/4]
 
 *** DONE ABB [3/3]
 - [X] Búsqueda
 - [X] Inserción
 - [X] Eliminación
 
-*** TODO Splay Tree [2/3]
+*** DONE Splay Tree [3/3]
 - [X] Búsqueda
-- [ ] Eliminación
+- [X] Eliminación
 - [X] Inserción
 
 *** DONE Árbol AVL [3/3]
