@@ -3,6 +3,8 @@
 
 #include "entry.h"
 
+#define VANEMDEBOAS_UNIVERSO (1<<31)
+
 // Fuentes para entender el source
 // (1): http://www.daimi.au.dk/~gudmund/dynamicF04/vEB.pdf
 // (2): Apuntes del profe
@@ -13,10 +15,11 @@ typedef struct {
 
 struct vebtree {
   unsigned int size;
-  //int max;
-  //int min;
+  unsigned int max;
+  unsigned int min;
   struct vebtree *top;
-  struct vebtree **min;
+  struct vebtree **bottom;
+  unsigned int wordsize;
 };
 
 void vanemdeboas_new(vanemdeboas* veb);
