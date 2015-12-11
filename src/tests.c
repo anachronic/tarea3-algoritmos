@@ -221,6 +221,20 @@ void veb_manual(){
   vanemdeboas_insertar(&v, a, "algo", 5);
   vanemdeboas_insertar(&v, b, "otra cosa", 10);
 
+  if(vanemdeboas_buscar(&v, a) == NULL){
+    puts("Warning, elemento a no encontrado");
+  }
+
+  if(vanemdeboas_buscar(&v, b) == NULL){
+    puts("Warning, elemento b no encontrado");
+  }
+
+  if(vanemdeboas_buscar(&v, "ATGC") != NULL){
+    puts("Warning: se encontró un elemento nada que ver");
+  }
+
+  puts("si no hay warnings, todo ok");
+
   // que no nos dé segfault no más...
   // sin buscar no se puede testear integridad
 }

@@ -81,3 +81,19 @@ static struct vebtree *_veb_insertar(struct vebtree *v, unsigned int key, void *
 void vanemdeboas_insertar(vanemdeboas *veb, const char *key, void *val, int valsize){
   veb->veb = _veb_insertar(veb->veb, _hashstring(key), val, valsize, VANEMDEBOAS_UNIVERSO);
 }
+
+static void *_veb_buscar(struct vebtree *v, unsigned int key){
+  if(v == NULL) return NULL;
+
+  // si está en este nodo, stop.
+  if(v->min == key || v->max == key) return (void*)"si";
+
+  // si está, está en bottom
+  if(v->bottom == NULL) return NULL;
+
+  return _veb_buscar(v->bottom[_highbits(key, v->wordsize)], _lowbits(key, v->wordsize));
+}
+
+void *vanemdeboas_buscar(vanemdeboas *veb, const char *key){
+  return _veb_buscar(veb->veb, _hashstring(key));
+}
