@@ -211,6 +211,20 @@ void test_splay(int eliminar, struct cadena_struct *cs){
   splaytree_dispose(&s);
 }
 
+void veb_manual(){
+  char a[] = "TTTATGTATTTTAAC";
+  char b[] = "GCTAGGGAGTCGATG";
+
+  vanemdeboas v;
+  vanemdeboas_new(&v);
+
+  vanemdeboas_insertar(&v, a, "algo", 5);
+  vanemdeboas_insertar(&v, b, "otra cosa", 10);
+
+  // que no nos dé segfault no más...
+  // sin buscar no se puede testear integridad
+}
+
 int main(int argc, char *argv[]){
   srand48(0);
   if(argc > 1){
@@ -239,6 +253,11 @@ int main(int argc, char *argv[]){
       test_splay(atoi(argv[2]), &cs);
     } else test_splay(10, &cs);
     puts("================================Terminar Test Splay Tree");
+
+    puts("");
+    puts("================================Iniciar Test van Emde Boas MANUAL");
+    veb_manual();
+    puts("================================Fin Test van Emde Boas manual");
 
     dispose_cadenas(&cs);
 

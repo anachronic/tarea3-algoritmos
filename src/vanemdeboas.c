@@ -47,20 +47,17 @@ void vanemdeboas_new(vanemdeboas *veb){
   veb->veb = NULL;
 }
 
-static struct vebtree *_veb_insertar(struct vebtree *v, unsigned int key, void *val, int valsize, int usize){
+static struct vebtree *_veb_insertar(struct vebtree *v, unsigned int key, void *val, int valsize, unsigned int usize){
 
   // este corresponde a insertar en un veb con size 0
   if(v == NULL){
     v = malloc(sizeof(struct vebtree));
     v->min = v->max = key;
     v->wordsize = usize;
-    if(usize > 2){
-      v->top = NULL;
-      v->bottom = (struct vebtree**)calloc(sqrt(usize), sizeof(struct vebtree*));
-    } else {
-      v->top = NULL;
-      v->bottom = NULL;
-    }
+
+    v->top = NULL;
+    v->bottom = (struct vebtree**)calloc(sqrt(usize), sizeof(struct vebtree*));
+
     return v;
   }
 
