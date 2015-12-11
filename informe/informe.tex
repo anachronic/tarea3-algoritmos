@@ -35,10 +35,51 @@
 \newpage
 
 \section{Introducción}
+El objetivo de este informe es comparar las implementaciones de diccionarios mediante \'arboles de b\'usqueda. En particular se estudiar\'a los siguientes casos:
+
+\begin{itemize}
+\item \'Arbol de b\'usqueda binaria
+\item \'Arbol AVL
+\item Splay Tree
+\item \'Arbol de Van Emde Boas
+\end{itemize}
+
+Interesa -como en cualquier experimento de eficiencia de estructuras- saber cu\'al es la mejor estructura posible para implementar diccionarios. De nuevo, el experimento es entre las cuatro estructuras antes mencionadas. Hay otras estructuras que implementan diccionarios que pueden ser mejores, pero se quiere evaluar estas cuatro.\\
+
+Aunque lo ideal sería encontrar una estructura que fuese mejor que todas las otras, esto probablemente no ocurrirá\footnote{Sobre esto se discute en la próxima sección, de Hipótesis.}, debido a las implementaciones de cada estructura. Con esa limitante, interesa saber cuáles son las mejores estructuras para qué casos.\\
+
+Para partir, se expone un pequeño resumen de cada estructura de datos, que se analizarán a fondo en la sección de Diseño Experimental. Se asumen conocimientos básicos de computación, en particular se asume que se conoce lo que es una estructura de datos, lo que significa recursividad y dominio básico de punteros. En los anexos se muestra dónde se puede investigar lo que son estos conceptos.\\
+
+\subsection{Árbol de Búsqueda Binaria}
+\label{subsec:expl_abb}
+
+Un Árbol de Búsqueda Binaria no es más que una estructura de datos que almacena un dato comparable y dos punteros a hijos que también son árboles. Este árbol cumple con la propiedad de que todos los elementos almacenados en los nodos de su subárbol izquierdo son menores al valor almacenado en el nodo \emph{raíz} y de igual manera, los elementos almacenados en los nodos de su subárbol derecho con mayores al valor de la raíz. \textbf{Esta propiedad la cumple tanto este tipo de árbol como los árboles AVL, los Splay Trees y otro tipo de árboles que no se estudian en este experimento}. La inserción y borrado se explica en la sección de diseño experimental, pero es importante tener en cuenta que dichas operaciones \textbf{no rearreglan el árbol}, de manera que la búsqueda no siempre cumple con la propiedad de ser logarítmica.
+
+\subsection{Árbol AVL}
+\label{subsec:expl_avl}
+Un Árbol AVL es un árbol de búsqueda binaria, pero que rearregla sus elementos a medida que se insertan, para mantenerse balanceado, en inglés este tipo de estructuras se llaman \emph{self balancing binary search tree}, que significa Árbol de Búsqueda Binaria Autobalanceado. Los AVL mantienen la diferencia de altura de sus dos subárboles constante, con ello se asegura que el tiempo de búsqueda, y en general de las operaciones sobre estos árboles sea logarítmica.
+
+\subsection{Splay Tree}
+\label{subsec:expl_splay}
+
+Un Splay Tree es un árbol de búsqueda binaria que no se preocupa de mantenerse balanceado\footnote{En cierto modo, sí lo hace.}, sino que su preocupación principal es mantener los elementos accesados con mayor frecuencia \emph{más arriba} en el árbol. Es decir, minimiza el número de comparaciones (o, dicho de otra manera, accesos a nodos) para elementos que son buscados frecuentemente.
+
+\subsection{Árbol de Van Emde Boas}
+\label{subsec:expl_veb}
+
+Un Árbol de Van Emde Boas es.. \texttt{Pendiente}.
+
+
 \section{Hipótesis}
+
+
 \section{Diseño Experimental}
 \section{Resultados}
 \section{Análisis e Interpretación de los Datos}
 \section{Apéndices}
+\subsection{Dominio Básico}
+\label{subsec:apen_dombasico}
+
+Dominio Básico de punteros, estructuras de datos y recursividad.
 
 \end{document} 
