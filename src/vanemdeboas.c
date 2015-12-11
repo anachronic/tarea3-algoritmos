@@ -29,11 +29,12 @@ static unsigned int _hashstring(const char *key){
     return 0;
 }
 
-// retorna los k bits más significativos de x
+// retorna los bits más la izquierda de k de x (ie: los más significativos)
 static unsigned int _highbits(unsigned int x, unsigned int k){
   return x>>k;
 }
 
+// retorna los bits más a la derecha de k de x (ie: los menos significativos)
 static unsigned int _lowbits(unsigned int x, unsigned int k){
-  return 0; // pendiente
+  return x & ((1<<k) - 1);
 }
