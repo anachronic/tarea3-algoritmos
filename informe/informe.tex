@@ -15,7 +15,6 @@
 
 \begin{document}
 
-\pagestyle{empty}
 \begin{figure}[t]
 \includegraphics[scale=0.83]{logo.png}
 %\hspace{3.5cm}
@@ -62,15 +61,43 @@ Un Árbol AVL es un árbol de búsqueda binaria, pero que rearregla sus elemento
 \subsection{Splay Tree}
 \label{subsec:expl_splay}
 
-Un Splay Tree es un árbol de búsqueda binaria que no se preocupa de mantenerse balanceado\footnote{En cierto modo, sí lo hace.}, sino que su preocupación principal es mantener los elementos accesados con mayor frecuencia \emph{más arriba} en el árbol. Es decir, minimiza el número de comparaciones (o, dicho de otra manera, accesos a nodos) para elementos que son buscados frecuentemente.
+Un Splay Tree es un árbol de búsqueda binaria que no se preocupa de mantenerse balanceado\footnote{En cierto modo, sí lo hace, pero esta perspectiva se abordará en la sección de Diseño Experimental.}, sino que su preocupación principal es mantener los elementos accesados con mayor frecuencia \emph{más arriba} en el árbol. Es decir, minimiza el número de comparaciones (o, dicho de otra manera, accesos a nodos) para elementos que son buscados frecuentemente.
 
 \subsection{Árbol de Van Emde Boas}
 \label{subsec:expl_veb}
 
 Un Árbol de Van Emde Boas es.. \texttt{Pendiente}.
 
+\subsection{Mediciones}
+\label{subsec:mediciones}
+
+Para comparar la efectividad de cada una de estas estructuras de datos, es necesario tomar algunos parámetros objetivos. En este caso, un buen parámetro que nunca falla es \textbf{el tiempo}. Además, es conocido que algunas estructuras pesan más que otras, así que también se medirá el \textbf{Tamaño ocupado por cada estructura}. En base a estas dos mediciones se pueden inferir otras medidas de rendimiento, o incluso comparar los resultados reales contra la teoría. Esto se expone en las secciones de Resultados y Análisis de Datos.
+
 
 \section{Hipótesis}
+Ya conociendo a grandes rasgos lo que hace cada árbol es posible elaborar algunas hipótesis sobre este experimento, y por supuesto, los argumentos para que ello sea así.\\
+
+Los Splay Tree no se quedan en la noción de que todo árbol debe ser balanceado. ?`Por qué deberían balancearse elementos que nunca van a ser buscados en una estructura? Esta simple noción hace que sean una estructura mucho más adaptada a la realidad, donde la cantidad de elementos que se buscan está -haciendo una estimación generosa- no más allá del 20\% de los elementos\footnote{En verdad, esta afirmación sobre los splay trees adaptándose a la realidad tiene que ver con la predilección del autor por esta estructura. De todas maneras, lo expuesto no dista mucho de la realidad}. O sea, los Splay Trees han de ser mucho mejores que los otros tipos de árboles para casos reales, justamente porque lo que más se busca siempre está ``a mano''.\\
+
+Sobre los Árboles de Búsqueda Binaria (en adelante \emph{ABB}) y AVL es sabido que los ABB tienen casos degenerados en los que se comportan como si fuesen listas enlazadas, esto pasa específicamente cuando los elementos se insertan ordenadamente. Este es un caso más bien extraño, pero en ningún momento imposible, de manera que los AVL son mejores que los ABB para casos degenerados. Sin embargo, en la teoría los AVL son mejores que los ABB, porque sus costos son siempre $O(\log n)$, pero lo que la notación obvía, es que existe un costo adicional -en la literatura es conocido como \emph{overhead}- asociado a el rebalanceo en la inserción y borrado. Los experimentos deberían indicar que, en promedio, los AVL se demoran más en insertar y borrar que los ABB.\\
+
+Respecto de los Van Emde Boas, deberían ser los árboles que lo hagan más rápido de todos al poder \emph{mapear} los posibles inputs a un conjunto \emph{discreto}, sin embargo el espacio que ocupan estos árboles es \textbf{gigante}, puesto que siempre asumen que todo el ``universo'' estará presente. Es decir, deberían tener siempre el peor almacenamiento, pero la búsqueda más rápida.\\
+
+Sobre el espacio, el árbol AVL ocupa $O(1)$ espacio más que un ABB convencional por nodo, puesto que cada uno debe almacenar su altura para poder rebalancearse, esto hace que los AVL sean más pesados que los ABB. Por otro lado, los Splay Tree no tienen overhead asociado al espacio, puesto que el reordenamiento de nodos no implica necesariamente rebalanceo, así que para espacio los Splay Tree deberían tener siempre el mismo espacio que los ABB.\\
+
+La discusión anterior puede dar una última hipótesis sobre los Splay Tree comparados con los ABB. Entre ellos dos no hay diferencias de espacio, y respecto de los costos de las operaciones, ABB tiene costo \textbf{promedio} $O(n)$, mientras que los Splay Tree tienen costo \textbf{amortizado} $O(n)$. Vale la pena discutir cuál es mejor usar en la práctica, porque ambos costos son conceptualmente muy parecidos, y ambos ocupan el mismo espacio para la estructura de datos. Para conjeturar, los Splay Tree debieran ser mejores que los ABB \textbf{si es que no se sabe nada del input}, pero los ABB deberían ser mejor si se tiene la certeza de que el input viene desordenado.\\
+
+Resumiendo:
+
+\begin{enumerate}
+\item Un Splay Tree se comporta mejor si hay elementos con mayores probabilidades de acceso que otros.
+\item Un AVL es mejor en casos degenerados con probabilidades uniformes (o desconocidas) de acceso.
+\item El Van Emde Boas es el árbol más rápido de todos en un universo discreto de llaves.
+\item El mejor espacio está entre ABB y Splay Tree.
+\item El peor espacio lo tiene van Emde Boas.
+\item Los AVL ocupan más espacio que los Splay Tree y los ABB.
+\end{enumerate}
+
 
 
 \section{Diseño Experimental}
