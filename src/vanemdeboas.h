@@ -23,8 +23,8 @@ struct vebtree {
 };
 
 void vanemdeboas_new(vanemdeboas* veb);
-void vanemdeboas_insertar(vanemdeboas* veb);
-void vanemdeboas_buscar(vanemdeboas *veb, const char *key);
+void vanemdeboas_insertar(vanemdeboas* veb, const char *key, void *val, int valsize);
+void *vanemdeboas_buscar(vanemdeboas *veb, const char *key);
 void vanemdeboas_eliminar(vanemdeboas *veb, const char *key);
 void vanemdeboas_dispose(vanemdeboas *veb);
 

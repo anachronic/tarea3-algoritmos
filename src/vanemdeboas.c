@@ -74,9 +74,13 @@ static struct vebtree *_veb_insertar(struct vebtree *v, unsigned int key, void *
   if(key > v->max) v->max = key;
 
   if(v->bottom[_highbits(insert, usize)] == NULL)
-    v = _veb_insertar(v->top, _highbits(insert, v->wordsize), val, valsize, sqrt(v->wordsize));
+    v->top = _veb_insertar(v->top, _highbits(insert, v->wordsize), val, valsize, sqrt(v->wordsize));
 
-  v = _veb_insertar(v->bottom[_highbits(insert, v->wordsize)], _lowbits(insert, v->wordsize), val, valsize, sqrt(v->wordsize));
+  v->bottom[_highbits(insert, v->wordsize)] = _veb_insertar(v->bottom[_highbits(insert, v->wordsize)], _lowbits(insert, v->wordsize), val, valsize, sqrt(v->wordsize));
 
   return v;
+}
+
+void vanemdeboas_insertar(vanemdeboas *veb, const char *key, void *val, int valsize){
+  veb->veb = _veb_insertar(veb->veb, _hashstring(key), val, valsize, VANEMDEBOAS_UNIVERSO);
 }
