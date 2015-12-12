@@ -2,7 +2,7 @@
 #+AUTHOR: Nicolás Salas V.
 
 * TODO Tarea 3 CC4102 [0%]
-  DEADLINE: <2015-12-11 vie>
+  DEADLINE: <2015-12-16 mié>
 
 ** TODO Código [3/4]
 
@@ -26,10 +26,10 @@
 - [ ] Eliminación
 - [ ] Inserción
 
-** TODO Informe [0%]
-- [ ] Introducción
-- [ ] Hipótesis
+** TODO Informe [50%]
+- [X] Introducción
+- [X] Hipótesis
 - [ ] Diseño Experimental
 - [ ] Resultados
 - [ ] Análisis e Interpretación
-- [ ] Anexos
+- [X] Anexos
