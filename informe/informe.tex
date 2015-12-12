@@ -8,13 +8,13 @@
 \usepackage{wrapfig}
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 
+\frenchspacing
 \title{\Huge Diccionarios \\ Tarea 2 - Diseño y Análisis de Algoritmos \\ Informe}
 \author{Nicolás Salas V.}
 \def\thesection       {\arabic{section}}
 \sloppy
 
 \begin{document}
-
 \begin{figure}[t]
 \includegraphics[scale=0.83]{logo.png}
 %\hspace{3.5cm}
@@ -142,6 +142,59 @@ Describir los casos de prueba.
 \section{Apéndices}
 \subsection{Dominio Básico}
 \label{subsec:apen_dombasico}
-En este apéndice se introducen algunos conceptos necesarios para entender este informe. 
+Como se mencionaba al principio, en este apéndice se introducen algunos conceptos necesarios para entender este informe. Dichos conceptos son recursión, punteros y estructuras de datos. Aquí se da una definición lo suficientemente sucinta para entender el informe, sin embargo, también se proveen links para entender estos conceptos a fondo, en caso de que el lector tenga interés en ello.
+
+\subsubsection{Recursión}
+
+Recursión, en general, es un concepto que indica que alguna cosa depende de sí misma. En el área de ciencias de la computación, la recursión de una función indica que calcular el valor de ella depende de una invocación a ella misma, generalmente con un argumento distinto. Por ejemplo, dado que las potencias son recursivas, se puede calcular la $n$-ésima potencia de 2 como sigue:
+
+\begin{verbatim}
+int potencia_de_2(int n){
+  if(n==0) return 1;
+  return potencia_de_2(n-1);
+}
+\end{verbatim}
+
+Como se aprecia, esta función se calcula invocándose a sí misma con un argumento distinto. La segunda línea indica que cuando $n$ vale 0, entonces se retorna 1 y entonces la \emph{recursión se detiene}. Entender este concepto es fundamental para entender estructuras de datos recursivas. Esto se explica más adelante.\\
+
+Existen muchos otros puntos de vista asociados a la reccursión. Para ir más allá del alcance de este informe se puede revisar la entrada de Wikipedia: https://es.wikipedia.org/wiki/Recursi\%C3\%B3n.
+
+\subsubsection{Punteros}
+Un puntero es una variable que almacena una dirección en memoria. Aunque la definición es correcta y no parece que haya mucho más que decir, es necesario entender algunas cosas.\\
+
+Los punteros tienen tipos, es decir, un puntero puede apuntar hacia una dirección de memoria que almacena \texttt{int}, o \texttt{char}, o \texttt{struct arbol}. Al acceder a las direcciones de memoria a la que los punteros apuntan, lo único que se hace es \textbf{interpretar el pedazo de memoria indicado como el tipo del puntero}. O sea, si en una aplicación existe un puntero a \texttt{int} y se accede a él. Se toman 4 bytes de memoria (tamaño de un \texttt{int}) y se interpretan como si fuera un entero. Lo mismo sucede con las estructuras de datos (se explican en la próxima subsección).\\
+
+Para este trabajo, los punteros son importantes porque permiten \emph{desacoplar} el espacio en el que habita una estructura de datos grandes, es decir, no es necesario que los datos residan en bloques continuos de memoria, gracias a los punteros, se puede acceder a estos datos sin tener que duplicar las entradas de cada nodo en los árboles.\\
+
+Los punteros son un área compleja y muy interesante de los lenguajes de programación. El profesor Jerry Cain en Stanford explica el concepto bastante bien en las clases del curso CS107 - Programming Paradigms, que se puede ver en YouTube: https://www.youtube.com/watch?v=jTSvthW34GU&list=PL9D558D49CA734A02.
+
+\subsubsection{Estructura de Datos}
+Una estructura de datos es un conjunto de datos que se agrupan en otro. Puede parecer no muy potente al principio, pero añadiendo el concepto de recursión y punteros es posible potenciarlas bastante, y es precisamente esta funcionalidad del lenguaje \texttt{C} la que permite escribir árboles tan fácilmente. Supóngase que se necesita crear una estructura árbol que almacene números, entonces lo único que hay que hacer es lo siguiente:
+\begin{verbatim}
+struct arbol{
+  int valor;
+  struct arbol *hijo_derecho;
+  struct arbol *hijo_izquierdo;
+};
+\end{verbatim}
+Lo que indica esta estrctura es que cada árbol tiene un valor y dos subárboles hijos: uno izquierdo y uno derecho. Cada subárbol es a su vez otro árbol que tiene la misma propiedad. Usando de los punteros, que cuando uno de ellos es \texttt{NULL}, se puede terminar la recursión. Este enfoque es el que se usa en la práctica de las implementaciones de los árboles que se usaron para este experimento.\\
+
+Para investigar más sobre estructuras de datos se puede leer la entrada en Wikipedia. Explicar las estructuras de datos más comunes es usualmente un curso entero. https://en.wikipedia.org/wiki/Data\_structure.
+
+\subsection{Ambiente de Ejecución}
+\label{subsec:ambiente}
+
+Entendiendo que los resultados varían dependiendo del procesador de la máquina donde se ejecuta el experimento, se incluyen las características del computador donde fue ejecutado el experimento.\\
+
+\begin{tabular}{ll}
+  Sistema Operativo & Arch Linux, Kernel 4.2.5-1-ARCH\\
+  Procesador & Intel Core i5-2500k @ 3.3 GHz\\
+  Memoria Disponible & 12 GiB\\
+  Tamaño de un puntero & 8 bytes (64 bits)\\
+\end{tabular}
+
+Usalmente al tamaño de un puntero (en la jerga de arquiterctura se le conoce como tamaño de palabra, o \emph{word size}) se le denomina tipo del sistema. Los más comunes son 64 bits en las máquinas nuevas y 32 bits en las máquinas un poco más viejas.
+
+
 
 \end{document} 
