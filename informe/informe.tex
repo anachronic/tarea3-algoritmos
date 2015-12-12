@@ -98,15 +98,50 @@ Resumiendo:
 \item Los AVL ocupan más espacio que los Splay Tree y los ABB.
 \end{enumerate}
 
-
-
 \section{Diseño Experimental}
+En esta sección se presentan todos los detalles que se tomaron en cuenta para implementar las distintas estructuras de datos y para medir el tiempo. Entre esos detalles, se presentan:
+\begin{enumerate}
+\item Lenguaje de Preferencia.
+\item Detalles de Implementación de todas las estructuras y sus algoritmos.
+\item Elaboración de los Casos de Prueba según las Hipótesis
+\end{enumerate}
+
+\subsection{Lenguaje de Preferencia}
+\label{subsec:lenguaje}
+Para este experimento es \textbf{crucial} no tener \emph{metadatos} asociados a las estructuras, porque añaden valores que no se quieren, en ningún caso, medir. Esto significa que se necesita un lenguaje en el que:
+\begin{enumerate}
+\item Sea fácil medir tamaños de las estructuras.
+\item Sea fácil usar punteros, por la naturaleza de las estructuras.
+\item Se pueda medir el tiempo transcurrido fehacientemente
+\end{enumerate}
+
+Y, aunque no sea imprescindible, siempre es deseable que el lenguaje sea rápido, para no esperar demasiado tiempo los resultados.\\
+
+Por lo anteriormente expuesto, el lenguaje que mejor calza con esto es \texttt{C}, aunque \texttt{C++} hubiese hecho el trabajo igual de bien. Escoger C sobre C++ es sólo por el dominio del autor de este informe sobre C. Además, la manipulación de bits necesaria para implementar los árboles de van Emde Boas es un beneficio al que no es fácil renunciar.
+
+\subsection{Detalles de Implementación}
+\label{subsec:detalles}
+En este apartado se muestra cómo se han implementado las distintas estructuras de datos, indicando cuando corresponda por qué se ha decidido así. Los algoritmos de cada estructura se exponen en pseudocódigo, de ser necesario, en los apéndices se incluye el código real en \texttt{C} de los algoritmos que necesiten explicación más profunda.
+
+\subsubsection{Árbol de Búsqueda Binaria}
+
+\subsubsection{Árbol AVL}
+
+\subsubsection{Splay Tree}
+
+\subsubsection{Árbol de van Emde Boas}
+
+
+\subsection{Casos de Prueba}
+\label{subsec:casos_prueba}
+Describir los casos de prueba.
+
+
 \section{Resultados}
 \section{Análisis e Interpretación de los Datos}
 \section{Apéndices}
 \subsection{Dominio Básico}
 \label{subsec:apen_dombasico}
-
-Dominio Básico de punteros, estructuras de datos y recursividad.
+En este apéndice se introducen algunos conceptos necesarios para entender este informe. 
 
 \end{document} 
