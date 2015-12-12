@@ -211,6 +211,62 @@ void test_splay(int eliminar, struct cadena_struct *cs){
   splaytree_dispose(&s);
 }
 
+void test_vanemdeboas(int eliminar, struct cadena_struct *cs){
+  vanemdeboas s;
+  vanemdeboas_new(&s);
+
+  printf("Insertar %i elementos en un van Emde Boas\n", cs->num_elems);
+  
+  int k;
+  for(k=0; k<cs->num_elems; k++){
+    char *cadena = get_cadena(cs, k);
+    vanemdeboas_insertar(&s, cadena, cadena, strlen(cadena) + 1);
+  }
+
+  printf("Buscar %i elementos en un van Emde Boas\n", cs->num_elems);
+  int encontrados = 0;
+  for (k=0; k<cs->num_elems; k++) {
+    char *found = (char*)vanemdeboas_buscar(&s, get_cadena(cs, k));
+    if(found == NULL){
+      printf("Warning: No se encontró %s\n", get_cadena(cs, k));
+      continue;
+    }
+    encontrados++;
+  }
+
+  printf("Encontrados %i elementos\n", encontrados);
+  
+  /*  printf("\nEliminar %i cadenas\n", eliminar);
+  for (k=0; k<eliminar; k++) {
+    char *cadena = get_cadena(cs, k);
+    splaytree_eliminar(&s, cadena);
+  }
+  printf("Se eliminaron %i cadenas\n", eliminar);
+  puts("Volver a buscar todas las cadenas");
+
+  encontrados = 0;
+  for (k=0; k<cs->num_elems; k++) {
+    char *cadena = get_cadena(cs, k);
+    void *found = splaytree_buscar(&s, cadena);
+
+    if(found != NULL){
+      encontrados++;
+      if (k<eliminar) {
+        printf("Warning: No se debería haber encontrado %s", (char*)found);
+      }
+    } else {
+      if(k>=eliminar){
+        printf("Warning: No se encontró %s\n", get_cadena(cs, k));
+      }
+    }
+  }
+  printf("Se espera encontrar %i cadenas\n", (cs->num_elems - eliminar));
+  printf("Encontradas %i\n", encontrados);
+
+  splaytree_dispose(&s);
+  */
+}
+
 void veb_manual(){
   char a[] = "TTTATGTATTTTAAC";
   char b[] = "GCTAGGGAGTCGATG";
@@ -270,7 +326,9 @@ int main(int argc, char *argv[]){
 
     puts("");
     puts("================================Iniciar Test van Emde Boas MANUAL");
-    veb_manual();
+    if(argc > 2){
+      test_vanemdeboas(atoi(argv[2]), &cs);
+    } else test_vanemdeboas(10, &cs);
     puts("================================Fin Test van Emde Boas manual");
 
     dispose_cadenas(&cs);

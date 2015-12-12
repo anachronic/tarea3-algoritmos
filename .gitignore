@@ -7,3 +7,6 @@ out
 #*
 /.#TODO.org
 src/tarea3
+/src/GPATH
+/src/GRTAGS
+/src/GTAGS
