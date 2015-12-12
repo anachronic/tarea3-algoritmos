@@ -195,6 +195,29 @@ Entendiendo que los resultados varían dependiendo del procesador de la máquina
 
 Usalmente al tamaño de un puntero (en la jerga de arquiterctura se le conoce como tamaño de palabra, o \emph{word size}) se le denomina tipo del sistema. Los más comunes son 64 bits en las máquinas nuevas y 32 bits en las máquinas un poco más viejas.
 
+\subsection{Estadística de los resultados}
+\label{subsec:estadistica}
+
+Entendiendo que siempre existe algo que genera \emph{ruido} en las mediciones de los tiempos, es necesario \emph{normalizar} estos resultados para presentar resultados creíbles de calidad. Entre los factores que generan ruido (de los que no se pueden controlar) están:
+
+\begin{itemize}
+\item El Scheduler del Sistema Operativo
+\item La aleatorización de algunos inputs
+\item Uso de memoria externa en caso de necesitarla (por parte del Sistema Operativo)
+\end{itemize}
+
+Entonces, para normalizar estos datos se hace uso de la estadística. El objetivo es entregar el promedio de muchas mediciones, tal que el error asociado al promedio entregado no supere el 95\%. En adelante se dirá que un resultado es tal \emph{con un 95\% de confianza}. Para hacer esto se calculan los estimadores insesgados del promedio y la desviación estándar para los valores que se quiere calcular (en este caso, tiempo y espacio). Se repiten los experimentos hasta que el promedio ($\mu$) y la desviación estándar ($\sigma$) no superen el error esperado. Esto es, el 5\%. Matemáticamente se puede expresar de la siguiente forma.
+
+\begin{align}
+  \mu &= \sum_{i=1}^n X_i \nonumber \\
+  \sigma &= \sqrt{\dfrac{\sum_{i=1}^n (X_i - \mu)^{2}}{n-1}} \nonumber \\
+  \sigma &= \sqrt{\dfrac{\sum_{i=1}^n X_i^2 - n\mu^2}{n-1}} \nonumber \\
+  \varepsilon &= \dfrac{\sigma}{\sqrt{n}} \nonumber
+\end{align}
+
+Con las ecuaciones anteriores se pueden calcular estimadores para el promedio ($\mu$), la desviación estandar ($\sigma$) y el error ($\varepsilon$). Para todos los experimentos se ha definido la máxima tolerancia para el error como el 5\% del promedio. Esto es:
+$$\varepsilon < 0.05\cdot \mu$$
+La condición anterior asegura que los datos entregados corresponden a valores estadísticamente aceptable, y eliminan casos de \emph{outliers}\footnote{Un outlier corresponde a un valor extremadamente alejado de la media, de manera que \emph{contamina} la medición del promedio.}, o casos extremadamente extraños en caso de existir inputs probabilísticos (que los hay).
 
 
 \end{document} 
