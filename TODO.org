@@ -33,3 +33,35 @@
 - [ ] Resultados
 - [ ] Análisis e Interpretación
 - [X] Anexos
+
+** Experimentos
+   - Elementos con mayores probabilidades que otros
+   - Caso degenerado (elementos ordenados)
+   - Caso random.
+
+Cada experimento con cadenas al azar y cadenas extraídas desde pizza & chili.
+
+  - Caso degenerado -> Se generan las cadenas 1 por 1 y ya está
+  - Caso random -> Usamos un número suficientemente grande de elementos sin preocuparnos por los repetidos, tal que la estructura sea más o menos pesada.
+  - Elementos con mayores probabilidades que otros.
+    1) Tirar una moneda, con probabilidad 0.9 caigo en el 10% de los elementos, con 0.1 en el resto.
+    2) Elijo *uniformemente* entre los conjuntos un elemento para buscarlo.
+
+*** Cómo hacer los experimentos?
+
+Para todos los experimentos descritos hacemos lo que sigue:
+
+- Siempre medir para 2^k con k en {0, 25}
+  * Anotar los valores de tiempo acumulados para cada 2^k
+  * Anotar el tamaño de la estructura para 2^k
+- Al terminar se hace lo sgte
+  * Buscar todos los elementos en el orden que fueron insertados
+    + Al llegar a 2^k, anotar el tiempo acumulado
+  * Buscar algunos elementos con mayor probabilidad que otros. La estructura en este punto tiene 2^25 elems
+    Vamos a tomar 2^16 elementos y haremos lo que sigue.
+    + Tirar una moneda, con probabilidad 0.9 caer en el 10% de los elementos, con 0.1 en el resto.
+    + Del conjunto que se elige, tomar un valor elegido con probabilidad uniforme
+    + Buscarlo
+    + Anotar el tiempo promedio de búsqueda
+- Eliminar todo en orden
+  - Anotar el tiempo promedio de eliminación para 2^k elementos.
