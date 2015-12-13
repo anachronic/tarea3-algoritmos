@@ -5,7 +5,7 @@ PROGNAME=tarea3
 DEPS = avl.h abb.h splaytree.h vanemdeboas.h entry.h cadenas.h
 OBJS = avl.o abb.o splaytree.o vanemdeboas.o entry.o cadenas.o
 
-default : $(PROGNAME)
+default : tests
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -13,7 +13,13 @@ default : $(PROGNAME)
 tests.o :
 	$(CC) $(CFLAGS) -o tests.o tests.c -c
 
-$(PROGNAME) : $(OBJS) tests.o
+$(PROGNAME).o :
+	$(CC) $(CFLAGS) -o $(PROGNAME).o $(PROGNAME).c -c
+
+tests : $(OBJS) tests.o
+	gcc -o $(PROGNAME) $^ $(CFLAGS) $(LDFLAGS)
+
+$(PROGNAME) : $(OBJS) tarea3.o
 	gcc -o $(PROGNAME) $^ $(CFLAGS) $(LDFLAGS)
 
 clean:
