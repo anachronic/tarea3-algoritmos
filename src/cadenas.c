@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
 
 #include "cadenas.h"
 
@@ -9,32 +11,31 @@ static long intrand(long max){
   return (long)(drand48() * max);
 }
 
-// cuadrático. whatever. no voy a andar haciendo hashsets...
-void eliminar_duplicados(struct cadena_struct *cs){
-  int k = 0;
-  int i = 0;
+char *adn_from_file(const char *file){
+  FILE *fp = fopen(file, "rb");
 
-  while(k < cs->num_elems){
-    char *esta = get_cadena(cs, k);
-
-    i=k+1;
-    while(i < cs->num_elems){
-      // si cadenas[i] es igual, la sacamos
-      if(strcmp(cs->cadenas[i], esta) == 0){
-        free(cs->cadenas[i]);
-        cs->num_elems--;
-        if(cs->num_elems - i > 0)
-          memmove(cs->cadenas + i, cs->cadenas + i + 1, sizeof(char*) * (cs->num_elems - i));
-
-        // no aumentamos i. Disminuyó el tamaño
-        continue;
-      }
-      i++;
-    }
-
-    k++;
+  if(fp == NULL){
+    fprintf(stderr, "No se encontró el archivo de DNA. Revise cómo se debiera llamar en cadenas.h");
+    exit(-1);
   }
+
+  long filesize;
+  fseek(fp, 0, SEEK_END);
+  filesize = ftell(fp);
+
+  long patronstart = intrand(filesize - 1 - TAMANO_CADENA);
+  fseek(fp, patronstart, SEEK_SET);
+
+  char *buffer = malloc(TAMANO_CADENA + 1);
+
+  fread(buffer, sizeof(char), TAMANO_CADENA, fp);
+  buffer[TAMANO_CADENA] = 0;
+
+  fclose(fp);
+
+  return buffer;
 }
+
 
 
 char base_rand(){
@@ -51,7 +52,7 @@ char base_rand(){
 void cadena_rand(char *buffer){
   int k;
 
-  for(k=0; k<TAMANO_CADENA-1; k++){
+  for(k=0; k<TAMANO_CADENA; k++){
     buffer[k] = base_rand();
   }
   buffer[k] = 0;
@@ -64,7 +65,7 @@ char *get_random_from_array(char **arr, long size){
   return arr[index];
 }
 
-
+/** Estructura para guardar las cadenas **/
 void crear_cadenas(struct cadena_struct *cs, int size){
   cs->total_alloc = size;
   cs->num_elems = size;
@@ -103,3 +104,28 @@ void dispose_cadenas(struct cadena_struct *cs){
   }
 }
 
+void eliminar_duplicados(struct cadena_struct *cs){
+  int k = 0;
+  int i = 0;
+
+  while(k < cs->num_elems){
+    char *esta = get_cadena(cs, k);
+
+    i=k+1;
+    while(i < cs->num_elems){
+      // si cadenas[i] es igual, la sacamos
+      if(strcmp(cs->cadenas[i], esta) == 0){
+        free(cs->cadenas[i]);
+        cs->num_elems--;
+        if(cs->num_elems - i > 0)
+          memmove(cs->cadenas + i, cs->cadenas + i + 1, sizeof(char*) * (cs->num_elems - i));
+
+        // no aumentamos i. Disminuyó el tamaño
+        continue;
+      }
+      i++;
+    }
+
+    k++;
+  }
+}
