@@ -73,7 +73,7 @@ void crear_cadenas(struct cadena_struct *cs, int size){
 
   int k;
   for(k=0; k<cs->num_elems; k++){
-    cs->cadenas[k] = (char*)malloc(TAMANO_CADENA);
+    cs->cadenas[k] = (char*)malloc(TAMANO_CADENA+1);
     cadena_rand(cs->cadenas[k]);
   }
 }
@@ -128,4 +128,14 @@ void eliminar_duplicados(struct cadena_struct *cs){
 
     k++;
   }
+}
+
+int _cmpstr(const void *a, const void *b){
+  const char *aa = *(const char **)a;
+  const char *bb = *(const char **)b;
+  return strcmp(aa, bb);
+}
+
+void ordenar_cadenas(struct cadena_struct *cs){
+  qsort(cs->cadenas, cs->num_elems, sizeof(char*), _cmpstr);
 }

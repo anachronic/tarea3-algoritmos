@@ -17,7 +17,21 @@ static double elapsed_time(struct timeval *a, struct timeval *b){
 
 int main(int argc, char *argv[])
 {
-  
+  struct cadena_struct cs;
+  crear_cadenas(&cs, 10);
+  int i;
+  puts("Cadenas sin ordenar");
+  for (i = 0; i<cs.num_elems; i++) {
+    printf("%s\n", get_cadena(&cs, i));
+  }
+
+  puts("\nCadenas ordenadas");
+  ordenar_cadenas(&cs);
+  for (i = 0; i<cs.num_elems; i++) {
+    printf("%s\n", get_cadena(&cs, i));
+  }
+
+
   return 0;
 }
 
