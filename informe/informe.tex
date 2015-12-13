@@ -73,7 +73,7 @@ Un Árbol de Van Emde Boas es.. \texttt{Pendiente}.
 
 Para comparar la efectividad de cada una de estas estructuras de datos, es necesario tomar algunos parámetros objetivos. En este caso, un buen parámetro que nunca falla es \textbf{el tiempo}. Además, es conocido que algunas estructuras pesan más que otras, así que también se medirá el \textbf{Tamaño ocupado por cada estructura}. En base a estas dos mediciones se pueden inferir otras medidas de rendimiento, o incluso comparar los resultados reales contra la teoría. Esto se expone en las secciones de Resultados y Análisis de Datos.
 
-
+\newpage
 \section{Hipótesis}
 Ya conociendo a grandes rasgos lo que hace cada árbol es posible elaborar algunas hipótesis sobre este experimento, y por supuesto, los argumentos para que ello sea así.\\
 
@@ -98,6 +98,8 @@ Resumiendo:
 \item Los AVL ocupan más espacio que los Splay Tree y los ABB.
 \end{enumerate}
 
+
+\newpage
 \section{Diseño Experimental}
 En esta sección se presentan todos los detalles que se tomaron en cuenta para implementar las distintas estructuras de datos y para medir el tiempo. Entre esos detalles, se presentan:
 \begin{enumerate}
@@ -134,7 +136,35 @@ En este apartado se muestra cómo se han implementado las distintas estructuras 
 
 \subsection{Casos de Prueba}
 \label{subsec:casos_prueba}
-Describir los casos de prueba.
+El objetivo de los casos de prueba es mostrar la fortalezas y debilidades de cada estructura según las mediciones que se obtengan. Antes de exponer los casos de prueba diseñados, un pequeño recordatorio de las hipótesis
+
+\begin{itemize}
+\item Mostrar que los Splay Tree son mejores que las otras implementaciones cuando las probabilidades de acceso no son uniformes.
+\item Mostrar que los AVL son mejores que los ABB en casos degenerados
+\item Mostrar que los ABB y Splay Tree ocupan el mismo espacio.
+\item El van Emde Boas es el más rápido de todos.
+\item El van Emde Boas siempre ocupa más espacio que los otros.
+\item Los AVL ocupan más espacio que los Splay Tree y ABB.
+\end{itemize}
+
+Además, se espera medir cosas que no se pueden predecir en la teoría. Por ejemplo, comparar la rapidez de un Splay Tree con probabilidades no uniformes de acceso versus un van Emde Boas. O comparar qué tanto mejor es un AVL contra un ABB en el caso promedio.\\
+
+Como el objetivo es probar diccionarios, en particular sólo interesa la búsqueda de las llaves dentro de las estructuras, de manera que para el par $(K, V)$ que se debe insertar, se hará que $K$ sea igual a $V$.\\
+
+Para experimentar con estas estructuras, se generarán cadenas de largo 15 de dos formas distintas. De forma aleatoria, y obtenidas de genes reales, para este último caso se usarán los datos proporcionados por Pizza \& Chili Corpus. El objetivo de tomar estos datos es simplemente obtener datos reales, para ver si efectivamente existe una diferencia entre datos reales y datos generados aleatoriamente.\\
+
+Bajo cada uno de esos dos espacios de prueba se generará dos tipos de conjuntos de cadenas. Se quiere probar el caso degenerado y el caso promedio. O sea, por un lado se insertará cadenas ordenadas lexicográficamente\footnote{Usando la función \texttt{strcmp} de \texttt{C}}, y por otro lado se insertarán las cadenas como se hayan obtenido del input. Este caso de prueba apunta directamente a medir los ABB contra otro tipo de árboles, y ver si los demás (árboles) se ven afectados por los casos degenerados.\\
+
+Entonces, para cada espacio de pruebas, y para cada conjunto de cadenas el experimento será:
+
+\begin{enumerate}
+\item Insertar $2^k$ elementos conn $k\in \{0 ... 2^{25}\}$
+\item Para cada uno de esos $2^k$ medir ocupación de la estructura y el tiempo acumulado
+\item Al terminar las inserciones, buscar todos los elementos en el orden en el que se insertaron y anotar el tiempo y ocupación acumulados.
+\item Tomar $2^{16}$ elementos y tirar una moneda. Con probabilidad 0.9 buscar en el 10\% de los elementos, y con 0.1 buscar en el 90\% restante. Del conjunto escogido se elige un elemento con probabilidad uniforme.
+\item Anotar el tiempo promedio de búsqueda de los $2^{16}$ elementos.
+\item Eliminar en orden los elementos y para cada $2^k$, con $k\in \{2^{25} ... 0\}$, anotar la ocupación y el tiempo de eliminación de la estructura.
+\end{enumerate}
 
 
 \section{Resultados}
