@@ -180,3 +180,17 @@ void abb_dispose(abb *a){
   _free_abb(a->raiz);
   a->raiz = NULL;
 }
+
+static unsigned long long _abb_espacio(struct abb_nodo *nodo){
+  if(nodo == NULL) return 0;
+
+  //este es el peso de esta estructura;
+  unsigned long long tama_estructura = sizeof(struct abb_nodo) + entry_size(nodo->e);
+
+  // el peso total es el peso de esta struct + el peso de los 2 subárboles.
+  return tama_estructura + _abb_espacio(nodo->izq) + _abb_espacio(nodo->der);
+}
+
+unsigned long long abb_espacio(abb *a){
+  return sizeof(abb) + _abb_espacio(a->raiz);
+}

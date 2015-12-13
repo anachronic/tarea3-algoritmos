@@ -12,4 +12,6 @@ void free_entry(entry *e);
 void entry_new(entry *e, const char *key, void *val, int size);
 void entry_replace_val(entry *e, void *val, int valsize);
 
+unsigned long long entry_size(entry *e);
+
 #endif //TAREA3_ALGORITMOS_ENTRY_H

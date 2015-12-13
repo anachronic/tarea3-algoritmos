@@ -255,3 +255,13 @@ static struct splay_nodo *_splaytree_eliminar(struct splay_nodo *nodo, const cha
 void splaytree_eliminar(splaytree *s, const char *key){
   s->raiz = _splaytree_eliminar(s->raiz, key);
 }
+
+static unsigned long long _splaytree_espacio(struct splay_nodo *nodo){
+  if(nodo == NULL) return 0;
+  unsigned long long tama_estructura = sizeof(struct splay_nodo) + entry_size(nodo->e);
+  return tama_estructura + _splaytree_espacio(nodo->izq) + _splaytree_espacio(nodo->der);
+}
+
+unsigned long long splaytree_espacio(splaytree *s){
+  return sizeof(splaytree) + _splaytree_espacio(s->raiz);
+}

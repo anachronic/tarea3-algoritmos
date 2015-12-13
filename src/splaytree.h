@@ -25,4 +25,6 @@ void *splaytree_buscar(splaytree *s, const char *key);
 void splaytree_eliminar(splaytree *s, const char *key);
 void splaytree_dispose(splaytree *s);
 
+unsigned long long splaytree_espacio(splaytree *s);
+
 #endif //TAREA3_ALGORITMOS_SPLAYTREE_H

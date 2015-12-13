@@ -31,3 +31,13 @@ void entry_replace_val(entry *e, void *val, int valsize){
   e->val_size = valsize;
   memcpy(e->val, val, valsize);
 }
+
+unsigned long long entry_size(entry *e){
+  if (e == NULL) return 0;
+
+  // la estructura pesa 2 punteros + un entero (ie: sizeof(entry))
+  unsigned long long peso = sizeof(entry);
+
+  // y la entry guarda e->val_size bytes además.
+  return peso + e->val_size;
+}

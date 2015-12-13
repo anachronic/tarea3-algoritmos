@@ -22,4 +22,6 @@ void* avl_buscar(avl *a, const char *key);
 void avl_eliminar(avl *a, const char *key);
 void avl_dispose(avl *a);
 
+unsigned long long avl_espacio(avl *a);
+
 #endif //TAREA3_ALGORITMOS_AVL_H

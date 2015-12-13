@@ -239,3 +239,15 @@ void avl_dispose(avl *a){
   _free_avl(a->raiz);
   a->raiz = NULL;
 }
+
+static unsigned long long _avl_espacio(struct avl_nodo *nodo){
+  if(nodo == NULL) return 0;
+
+  // se explica en abb.c
+  unsigned long long tama_estructura = sizeof(struct avl_nodo) + entry_size(nodo->e);
+  return tama_estructura + _avl_espacio(nodo->izq) + _avl_espacio(nodo->der);
+}
+
+unsigned long long avl_espacio(avl *a){
+  return sizeof(avl) + _avl_espacio(a->raiz);
+}

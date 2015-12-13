@@ -19,6 +19,6 @@ void* abb_buscar(abb *a, const char *key);
 void abb_eliminar(abb *a, const char *key);
 void abb_dispose(abb *a);
 
-
+unsigned long long abb_espacio(abb *a);
 
 #endif //TAREA3_ALGORITMOS_ABB_H
