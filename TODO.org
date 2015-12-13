@@ -65,3 +65,15 @@ Para todos los experimentos descritos hacemos lo que sigue:
     + Anotar el tiempo promedio de búsqueda
 - Eliminar todo en orden
   - Anotar el tiempo promedio de eliminación para 2^k elementos.
+
+*** Cómo medir los resultados?
+
+Primero que cualquier cosa: Los resultados deben *promediarse* entre sí con diferentes inputs.
+Por lo tanto, la struct cadena es lo último que se genera (qué lata, por lo del disco, digo).
+
+Entonces, el algoritmo (very chanta) de generación de resultados es el siguiente:
+
+- Por cada espacio (real o sintético):
+  - Por cada ESTRUCTURA (abb, avl, sptree, veb)
+    - Por cada tipo de input (random, degenerado), ejecutar el experimento y obtener mu,stdev de todos los datos a buscar
+      - Si todos los errores son menores que \varepsilon, terminar.

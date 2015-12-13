@@ -5,8 +5,6 @@
 
 #include "cadenas.h"
 
-#define TAMANO_CADENA 15
-
 static long intrand(long max){
   return (long)(drand48() * max);
 }
@@ -78,6 +76,17 @@ void crear_cadenas(struct cadena_struct *cs, int size){
   }
 }
 
+void crear_cadenas_file(struct cadena_struct *cs, int size){
+  cs->total_alloc = size;
+  cs->num_elems = size;
+  cs->cadenas = malloc(sizeof(char*) * size);
+
+  int k;
+  for (k=0; k<cs->num_elems; k++) {
+    cs->cadenas[k] = adn_from_file(ADN_FILE);
+  }
+}
+
 char *get_cadena(struct cadena_struct *cs, int k){
   return cs->cadenas[k];
 }
@@ -104,6 +113,8 @@ void dispose_cadenas(struct cadena_struct *cs){
   }
 }
 
+// esto NO se usa para el experimento. Sólo para testing, el algoritmo es terrible
+// y no se debiera llamar con más de ~30k elementos.
 void eliminar_duplicados(struct cadena_struct *cs){
   int k = 0;
   int i = 0;

@@ -2,10 +2,10 @@ CC=gcc
 CFLAGS=-g -Wall
 LDFLAGS=-lm
 PROGNAME=tarea3
-DEPS = avl.h abb.h splaytree.h vanemdeboas.h entry.h cadenas.h
-OBJS = avl.o abb.o splaytree.o vanemdeboas.o entry.o cadenas.o
+DEPS = avl.h abb.h splaytree.h vanemdeboas.h entry.h cadenas.h experimentos.h
+OBJS = avl.o abb.o splaytree.o vanemdeboas.o entry.o cadenas.o experimentos.o
 
-default : tests
+default : $(PROGNAME)
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)

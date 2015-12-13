@@ -2,7 +2,8 @@
 #define TAREA2_ALGORITMOS_CADENAS_H
 
 #define BUSCAR_CADENAS_RAND (1<<16)
-#define TOTAL_CADENAS (1<<25)
+#define TOTAL_CADENAS (1<<23)
+#define TAMANO_CADENA 15
 
 #define ADN_FILE "texts/dna.200MB"
 
@@ -17,6 +18,7 @@ struct cadena_struct{
 };
 
 void crear_cadenas(struct cadena_struct *cs, int size);
+void crear_cadenas_file(struct cadena_struct *cs, int size);
 char *get_cadena(struct cadena_struct *cs, int k);
 void eliminar_cadena(struct cadena_struct *cs, int k);
 void dispose_cadenas(struct cadena_struct *cs);
