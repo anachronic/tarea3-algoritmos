@@ -41,28 +41,43 @@ void experimento_abb(const char *espacio){
   struct cadena_struct cs;
   crear_cadenas(&cs, TOTAL_CADENAS);
 
-  // ok, ok, esto es terrible y tiene pinta de que va a correr por varios días.
-  // 1. medimos tiempo y espacio para cada uno de los 2^k.
-  // 2. calculamos el error asociado a todas las mediciones que llevamos
-  // 3. si TODOS los errores no son menores a lo esperado, repetir el experimento
-  // Esto es un infierno. maybe reducir el espacio a 2^20?
-
+  // variables propias de la iteración y mediciones
   int k;
   int potencia = 0;
   struct timeval inicio, fin;
+
+  // variables estadísticas
+  // el sufijo t es de tiempo, o es para ocupación
+  // stdev_mu es la desviación estandar del promedio
+  long double suma_t = 0.0;
+  unsigned long long suma_o = 0;
+  
+  long double promedio_t[TAMANO_EXPERIMENTO];
+  unsigned long long promedio_o[TAMANO_EXPERIMENTO];
+
+  long double stdev_o[TAMANO_EXPERIMENTO];
+  long double stdev_t[TAMANO_EXPERIMENTO];
+
+  long double stdev_mu_o, stdev_mu_t;
 
   gettimeofday(&inicio, NULL);
   for (k=0; k<cs.num_elems; k++) {
     char *lacadena = get_cadena(&cs, k);
     abb_insertar(&a, lacadena, lacadena, TAMANO_CADENA+1);
 
-    if(k == 1<<potencia){
+    if(k+1 == 1<<potencia){
       // por ahora reportamos resultados en pantallax.
       gettimeofday(&fin, NULL);
-      printf("elems: %i\ttiempo: %.8f\tocupacion: %llu\n", k, elapsed_time(&fin, &inicio), abb_espacio(&a));
+      promedio_o[potencia] = abb_espacio(&a);
+      promedio_t[potencia] = elapsed_time(&fin, &inicio);
       potencia++;
     }
   }
+
+  for (k=0; k<TAMANO_EXPERIMENTO; k++) {
+    printf("elems: %i\ttiempo: %.8Lf\tocupacion: %llu\n", k, promedio_t[k], promedio_o[k]);
+  }
+
 
   dispose_cadenas(&cs);
   fclose(fp);
