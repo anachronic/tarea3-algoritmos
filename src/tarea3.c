@@ -13,7 +13,8 @@
 
 int main(int argc, char *argv[])
 {
-  experimento_abb("real");
+  experimento_abb("real", "random");
+  experimento_abb("real", "degenerado");
 
 
   return 0;

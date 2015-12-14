@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -14,7 +15,10 @@ static void _printheader(FILE *f, const char *estructura){
   fprintf(f, "#n: Elementos en la estructura\n");
   fprintf(f, "#t: Tiempo acumulado de ejecución\n");
   fprintf(f, "#size: Tamaño en bytes de la estructura\n");
-  fprintf(f, "#n\tt\tsize\n");
+  fprintf(f, "#t_err: Error en la medición del tiempo\n");
+  fprintf(f, "#o_err: Error en la medición de la ocupación de la estructura\n");
+
+  fprintf(f, "#n\tt\tsize\tt_err\to_err\n");
 }
 
 static long double elapsed_time(struct timeval *a, struct timeval *b){
@@ -26,7 +30,7 @@ static long double elapsed_time(struct timeval *a, struct timeval *b){
 
 // tiempos y ocupacion deben poder aguantar la cantidad de elementos en cs.
 // en particular deben ser de tamaño 23 para el experimento default.
-static void run_once(struct cadena_struct *cs, long double *tiempos, unsigned long long *ocupacion){
+static void abb_run_once(struct cadena_struct *cs, long double *tiempos, unsigned long long *ocupacion){
   struct timeval inicio;
   struct timeval fin;
   abb a;
@@ -87,23 +91,13 @@ int check_errores(long double *tiempos,
 }
 
 
-void experimento_abb(const char *espacio){
+void experimento_abb(const char *espacio, const char *tipoinput){
   char filename[256];
-  char tipoinput[256];
-
-  sprintf(tipoinput, "random");
 
   sprintf(filename, "abb_%s_%s.dat", espacio, tipoinput);
   FILE *fp = fopen(filename, "w");
 
   _printheader(fp, filename);
-
-  abb a;
-  abb_new(&a);
-
-  // generamos una struct de cadenas nuevas aleatorias (este es el primer experimento)
-  struct cadena_struct cs;
-  crear_cadenas(&cs, TOTAL_CADENAS);
 
   // variables estadísticas
   // el sufijo t es de tiempo, o es para ocupación
@@ -147,7 +141,11 @@ void experimento_abb(const char *espacio){
 
 
   while(1){
-    run_once(&cs, tiempos_once, ocupacion_once);
+    struct cadena_struct cs;
+    crear_cadenas(&cs, TOTAL_CADENAS);
+    if(strcmp(tipoinput, "degenerado") == 0) ordenar_cadenas(&cs);
+    
+    abb_run_once(&cs, tiempos_once, ocupacion_once);
 
     for (k=0; k < TAMANO_EXPERIMENTO; k++) {
       tiempos[k] += tiempos_once[k];
@@ -158,7 +156,10 @@ void experimento_abb(const char *espacio){
     
     iteraciones++;
 
-    if(iteraciones < 2) continue;
+    if(iteraciones < 2){
+      dispose_cadenas(&cs);
+      continue;
+    }
 
     int j;
     for (k=0; k < TAMANO_EXPERIMENTO; k++) {
@@ -176,9 +177,9 @@ void experimento_abb(const char *espacio){
       
       stdev_mu_t[k] = stdev_t[k]/sqrtl(iteraciones*1.0);
       stdev_mu_o[k] = stdev_o[k]/sqrtl(iteraciones*1.0);
-      printf("Iteración=%i\tsize=%i\terror tiempo=%.8Lf\terror ocup=%.8Lf\n", iteraciones, 1<<k, stdev_mu_t[k]/promedio_t[k], stdev_mu_o[k]);
     }
 
+    dispose_cadenas(&cs);
 
     if(iteraciones > MIN_ITERACIONES && check_errores(promedio_t, promedio_o, stdev_mu_t, stdev_mu_o, TAMANO_EXPERIMENTO, 0.05)){
       puts("Experimento completado.");
@@ -187,15 +188,19 @@ void experimento_abb(const char *espacio){
   }
 
   for (k=0; k < TAMANO_EXPERIMENTO; k++) {
+    fprintf(fp, "%i\t%.8Lf\t%.2Lf\t%.8Lf\t%.8Lf\n", 1<<k, promedio_t[k], promedio_o[k], stdev_mu_t[k], stdev_mu_o[k]);
+  }
+
+
+  for (k=0; k < TAMANO_EXPERIMENTO; k++) {
     stdev_free(&se[k]);
   }
 
-  dispose_cadenas(&cs);
   fclose(fp);
 }
 
 
-
+// ---------------- Funciones para el cómputo de desviación estándar
 void stdev_new(struct stdev_estadistica *se){
   se->n = 0;
   se->valores = malloc(sizeof(unsigned long long) * STDEV_PREALLOC);
