@@ -35,6 +35,8 @@ static void run_once(struct cadena_struct *cs, long double *tiempos, unsigned lo
   int k;
   int potencia = 0;
 
+  long double sumatiempo = 0.0;
+
   gettimeofday(&inicio, NULL);
   for (k=0; k<cs->num_elems; k++) {
     char *lacadena = get_cadena(cs, k);
@@ -45,10 +47,14 @@ static void run_once(struct cadena_struct *cs, long double *tiempos, unsigned lo
       gettimeofday(&fin, NULL);
       // un hack para un comportamiento molesto... el primer elemento asumimos que se inserta en tiempo 0
       if(k==0) tiempos[potencia] = 0.0;
-      else tiempos[potencia] = elapsed_time(&fin, &inicio);
+      else {
+	sumatiempo += elapsed_time(&fin, &inicio);
+	tiempos[potencia] = sumatiempo;
+      }
       
       ocupacion[potencia] = abb_espacio(&a);
       potencia++;
+      gettimeofday(&inicio, NULL);
     }
   }
 
@@ -67,8 +73,10 @@ int check_errores(long double *tiempos,
 
   int tiempos_ok = errores_tiempo[0] < max_error * tiempos[0];
   int ocup_ok = errores_ocupacion[0] < max_error * ocupacion[0];
+
+  // sólo chequearemos desde i=10 hasta n.
   
-  for (i = 1; i<n; i++) {
+  for (i = 10; i<n; i++) {
     if(!tiempos_ok || !ocup_ok) return 0;
 
     tiempos_ok = tiempos_ok && errores_tiempo[i] < max_error * tiempos[i];
@@ -115,8 +123,10 @@ void experimento_abb(const char *espacio){
 
   long double stdev_mu_o[TAMANO_EXPERIMENTO];
   long double stdev_mu_t[TAMANO_EXPERIMENTO];
+  
+  struct stdev_estadistica se[TAMANO_EXPERIMENTO];
 
-  int MIN_ITERACIONES = 5;
+  int MIN_ITERACIONES = 10;
   int iteraciones = 0;
   int k;
 
@@ -132,10 +142,9 @@ void experimento_abb(const char *espacio){
     stdev_t[k] = 0.0;
     stdev_mu_o[k] = 0.0;
     stdev_mu_t[k] = 0.0;
+    stdev_new(&se[k]);
   }
 
-  struct stdev_estadistica se;
-  stdev_new(&se);
 
   while(1){
     run_once(&cs, tiempos_once, ocupacion_once);
@@ -144,7 +153,7 @@ void experimento_abb(const char *espacio){
       tiempos[k] += tiempos_once[k];
       tiempos2[k] += tiempos_once[k] * tiempos_once[k];
       ocupacion[k] += ocupacion_once[k];
-      stdev_add(&se, ocupacion_once[k]);
+      stdev_add(&se[k], ocupacion_once[k]);
     }
     
     iteraciones++;
@@ -159,15 +168,15 @@ void experimento_abb(const char *espacio){
       stdev_t[k] = sqrtl((tiempos2[k] - iteraciones*promedio_t[k]*promedio_t[k])/((double)(iteraciones - 1)));
 
       stdev_o[k] = 0.0;
-      for (j=0; j < se.n; j++) {
-	long double dif = se.valores[j] - promedio_o[k];
+      for (j=0; j < se[k].n; j++) {
+	long double dif = se[k].valores[j] - promedio_o[k];
 	stdev_o[k] += dif*dif/(iteraciones-1);
       }
       stdev_o[k] = sqrtl(stdev_o[k]);
       
       stdev_mu_t[k] = stdev_t[k]/sqrtl(iteraciones*1.0);
       stdev_mu_o[k] = stdev_o[k]/sqrtl(iteraciones*1.0);
-      printf("Iteración=%i\tsize=%i\terror tiempo=%.8Lf\terror ocup=%.8Lf\n", iteraciones, 1<<k, stdev_mu_t[k], stdev_mu_o[k]);
+      printf("Iteración=%i\tsize=%i\terror tiempo=%.8Lf\terror ocup=%.8Lf\n", iteraciones, 1<<k, stdev_mu_t[k]/promedio_t[k], stdev_mu_o[k]);
     }
 
 
@@ -177,7 +186,10 @@ void experimento_abb(const char *espacio){
     }
   }
 
-  stdev_free(&se);
+  for (k=0; k < TAMANO_EXPERIMENTO; k++) {
+    stdev_free(&se[k]);
+  }
+
   dispose_cadenas(&cs);
   fclose(fp);
 }
