@@ -3,7 +3,7 @@
 
 * TODO Tarea 3 CC4102 [0%]
   DEADLINE: <2015-12-16 mié>
-
+  
 ** TODO Código [3/4]
 
 *** DONE ABB [3/3]
@@ -47,6 +47,12 @@ Cada experimento con cadenas al azar y cadenas extraídas desde pizza & chili.
     1) Tirar una moneda, con probabilidad 0.9 caigo en el 10% de los elementos, con 0.1 en el resto.
     2) Elijo *uniformemente* entre los conjuntos un elemento para buscarlo.
 
+Elegir un elemento:
+
+  1. cs tiene size cs->num_elems
+  2. si un rand sale < 0.9 elegir un número [0, (int)cs->num_elems/10]
+  3. si sale >= 0.9 elegir un número [(int)cs->num_elems/10, cs->num_elems]
+
 *** Cómo hacer los experimentos?
 
 Para todos los experimentos descritos hacemos lo que sigue:
@@ -65,7 +71,7 @@ Para todos los experimentos descritos hacemos lo que sigue:
     + Anotar el tiempo promedio de búsqueda
 - Eliminar todo en orden
   - Anotar el tiempo promedio de eliminación para 2^k elementos.
-
+    
 *** Cómo medir los resultados?
 
 Primero que cualquier cosa: Los resultados deben *promediarse* entre sí con diferentes inputs.
@@ -77,3 +83,13 @@ Entonces, el algoritmo (very chanta) de generación de resultados es el siguient
   - Por cada ESTRUCTURA (abb, avl, sptree, veb)
     - Por cada tipo de input (random, degenerado), ejecutar el experimento y obtener mu,stdev de todos los datos a buscar
       - Si todos los errores son menores que \varepsilon, terminar.
+*** Algoritmo real
+
+Bueno, se tiene una función run_once que recibe como string el tipo de estructura de dato a probar
+y una cadena_struct, con el array de cadenas de cada caso. Dicha función sólo reporta resultados.
+
+La función de armar los resultados y los archivos es "experimento", que recibe como strings la estructura
+en la que se hará el experimento, el espacio, que representa real o sintético (según esto vemos la
+forma de construir una cadena_struct) y el tipo de input, que es random o degenerado.
+
+La función experimento debe calcular todos los promedios y errores.

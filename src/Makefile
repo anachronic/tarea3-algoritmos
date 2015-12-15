@@ -17,7 +17,7 @@ $(PROGNAME).o :
 	$(CC) $(CFLAGS) -o $(PROGNAME).o $(PROGNAME).c -c
 
 tests : $(OBJS) tests.o
-	gcc -o $(PROGNAME) $^ $(CFLAGS) $(LDFLAGS)
+	gcc -o tests $^ $(CFLAGS) $(LDFLAGS)
 
 $(PROGNAME) : $(OBJS) tarea3.o
 	gcc -o $(PROGNAME) $^ $(CFLAGS) $(LDFLAGS)
