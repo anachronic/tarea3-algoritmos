@@ -12,13 +12,10 @@
 
 static void _printheader(FILE *f, const char *estructura){
   fprintf(f, "# Resultados para %s\n", estructura);
-  fprintf(f, "#n: Elementos en la estructura\n");
-  fprintf(f, "#t: Tiempo acumulado de ejecución\n");
-  fprintf(f, "#size: Tamaño en bytes de la estructura\n");
-  fprintf(f, "#t_err: Error en la medición del tiempo\n");
-  fprintf(f, "#o_err: Error en la medición de la ocupación de la estructura\n");
-
-  fprintf(f, "#n\tt\tsize\tt_err\to_err\n");
+  fprintf(f, "#elementos: Elementos en la estructura\n");
+  fprintf(f, "#tiempo/ocup: Tiempo u ocupación dependiendo de la medición.\n");
+  fprintf(f, "#error: Error en la medición del parámetro\n");
+  fprintf(f, "#elementos\ttiempo/ocup\terror\n");
 }
 
 static long double elapsed_time(struct timeval *a, struct timeval *b){
@@ -99,12 +96,9 @@ static void _run_once(const char *estructura,
       sumatiempo += elapsed_time(&fin, &inicio);
       tiempos_busqueda_normal[potencia] = sumatiempo;
       potencia++;
-      printf("Normal. size=%i\t\ttiempo=%.8Lf\n", 1<<potencia, tiempos_busqueda_normal[potencia]);
       gettimeofday(&inicio, NULL);
     }
   }
-
-  puts("===== Fin tiempos de búsqueda normal");
   
   // fin búsquedas
   sumatiempo = 0.0;
@@ -128,12 +122,9 @@ static void _run_once(const char *estructura,
       sumatiempo += elapsed_time(&fin, &inicio);
       tiempos_busqueda_cargados[potencia] = sumatiempo;
       potencia++;
-      printf("Cargado. size=%i\t\ttiempo=%.8Lf\n", 1<<potencia, tiempos_busqueda_cargados[potencia]);
       gettimeofday(&inicio, NULL);
     }
   }
-
-  puts("===== Fin tiempos de búsqueda cargados");
 
   sumatiempo = 0.0;
   potencia = 0;
@@ -154,7 +145,6 @@ static void _run_once(const char *estructura,
       gettimeofday(&inicio, NULL);
     }
   }
-
   
   
   if(strcmp(estructura, "abb") == 0) abb_dispose(&abb);
@@ -191,17 +181,24 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
 
   sprintf(filename, "%s_%s_%s_insercion.dat", estructura, espacio, tipoinput);
   FILE *fp_in = fopen(filename, "w");
+  _printheader(fp_in, filename);
+  
   sprintf(filename, "%s_%s_%s_busquedanormal.dat", estructura, espacio, tipoinput);
   FILE *fp_bn = fopen(filename, "w");
+  _printheader(fp_bn, filename);
+  
   sprintf(filename, "%s_%s_%s_busquedacargada.dat", estructura, espacio, tipoinput);
   FILE *fp_bc = fopen(filename, "w");
+  _printheader(fp_bc, filename);
+  
   sprintf(filename, "%s_%s_%s_eliminacion.dat", estructura, espacio, tipoinput);
   FILE *fp_el = fopen(filename, "w");
-
-  _printheader(fp_in, filename);
-  _printheader(fp_bn, filename);
-  _printheader(fp_bc, filename);
   _printheader(fp_el, filename);
+  
+  sprintf(filename, "%s_%s_%s_ocupacion.dat", estructura, espacio, tipoinput);
+  FILE *fp_oc = fopen(filename, "w");
+  _printheader(fp_oc, filename);
+
 
   // variables estadísticas
   // el sufijo t es de tiempo, o es para ocupación
@@ -246,6 +243,7 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
   struct stdev_estadistica se[TAMANO_EXPERIMENTO];
 
   int MIN_ITERACIONES = 10;
+  int MAX_ITERACIONES = 50;
   int iteraciones = 0;
   int k;
 
@@ -255,18 +253,18 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
     tiempos_busquedacargada_once[k] = 0.0;
     tiempos_eliminacion_once[k] = 0.0;
     ocupacion_once[k] = 0;
-    
+      
     tiempos_insercion[k] = 0.0;
     tiempos_busqueda_normal[k] = 0.0;
     tiempos_busqueda_cargados[k] = 0.0;
     tiempos_eliminacion[k] = 0.0;
     ocupacion[k] = 0;
-    
+      
     tiempos2[k] = 0.0;
     tiempos_busqueda_n2[k] = 0.0;
     tiempos_busqueda_c2[k] = 0.0;
     tiempos_eliminacion2[k] = 0.0;
-    
+      
     promedio_t_insercion[k] = 0.0;
     promedio_t_busqueda_n[k] = 0.0;
     promedio_t_busqueda_c[k] = 0.0;
@@ -287,13 +285,18 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
     stdev_new(&se[k]);
   }
 
-
   while(1){
     struct cadena_struct cs;
-    crear_cadenas(&cs, TOTAL_CADENAS);
+    if(strcmp(espacio, "real") == 0){
+      // obtener cadenas desde el archivo
+      crear_cadenas_file(&cs, TOTAL_CADENAS);
+    } else {
+      // random.
+      crear_cadenas(&cs, TOTAL_CADENAS);
+    }
+    
     if(strcmp(tipoinput, "degenerado") == 0){
       ordenar_cadenas(&cs);
-      puts("Cadenas ordenadas");
     }
     
     _run_once(estructura,
@@ -314,7 +317,7 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
       tiempos_busqueda_n2[k] += tiempos_busquedanormal_once[k] * tiempos_busquedanormal_once[k];
       tiempos_eliminacion2[k] += tiempos_eliminacion_once[k] * tiempos_eliminacion_once[k];
       
-      if(k < BUSCAR_CADENAS_RAND){
+      if(k < CADENAS_RAND){
 	tiempos_busqueda_cargados[k] += tiempos_busquedacargada_once[k];
 	tiempos_busqueda_c2[k] += tiempos_busquedacargada_once[k] * tiempos_busquedacargada_once[k];
       }
@@ -337,14 +340,14 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
       promedio_t_eliminacion[k] = tiempos_eliminacion[k]/iteraciones;
       promedio_o[k] = (long double)ocupacion[k]/(1.0*iteraciones);
 
-      if(k < BUSCAR_CADENAS_RAND){
+      if(k < CADENAS_RAND){
 	promedio_t_busqueda_c[k] = tiempos_busqueda_cargados[k]/iteraciones;
       }
 
       stdev_t[k] = sqrtl((tiempos2[k] - iteraciones*promedio_t_insercion[k]*promedio_t_insercion[k])/((double)(iteraciones - 1)));
       stdev_t_busqueda_n[k] = sqrtl((tiempos_busqueda_n2[k] - iteraciones*promedio_t_busqueda_n[k]*promedio_t_busqueda_n[k])/((double)(iteraciones - 1)));
       stdev_t_eliminacion[k] = sqrtl((tiempos_eliminacion2[k] - iteraciones*promedio_t_eliminacion[k]*promedio_t_eliminacion[k])/((double)(iteraciones - 1)));
-      if(k < BUSCAR_CADENAS_RAND){
+      if(k < CADENAS_RAND){
 	stdev_t_busqueda_c[k] = sqrtl((tiempos_busqueda_c2[k] - iteraciones*promedio_t_busqueda_c[k]*promedio_t_busqueda_c[k])/((double)(iteraciones - 1)));
       }
 
@@ -375,14 +378,20 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
       puts("Experimento completado.");
       break;
     }
+
+    if(iteraciones > MAX_ITERACIONES){
+      puts("Cantidad máxima de iteraciones alcanzada, el error puede ser un poco más alto de lo esperado");
+      break;
+    }
   }
 
   for (k=0; k < TAMANO_EXPERIMENTO; k++) {
-    fprintf(fp_in, "%i\t%.8Lf\t%.2Lf\t%.8Lf\t%.8Lf\n", 1<<k, promedio_t_insercion[k], promedio_o[k], stdev_mu_t[k], stdev_mu_o[k]);
+    fprintf(fp_in, "%i\t%.8Lf\t%.8Lf\n", 1<<k, promedio_t_insercion[k], stdev_mu_t[k]);
     fprintf(fp_bn, "%i\t%.8Lf\t%.8Lf\n", 1<<k, promedio_t_busqueda_n[k], stdev_mu_t_busqueda_n[k]);
     fprintf(fp_el, "%i\t%.8Lf\t%.8Lf\n", 1<<k, promedio_t_eliminacion[k], stdev_mu_t_eliminacion[k]);
+    fprintf(fp_oc, "%i\t%.2Lf\t%.8Lf\n", 1<<k, promedio_o[k], stdev_mu_o[k]);
 
-    if(k < BUSCAR_CADENAS_RAND)
+    if(k < CADENAS_RAND)
       fprintf(fp_bc, "%i\t%.8Lf\t%.8Lf\n", 1<<k, promedio_t_busqueda_c[k], stdev_mu_t_busqueda_c[k]);
   }
 
@@ -395,6 +404,7 @@ void experimento(const char *estructura, const char *espacio, const char *tipoin
   fclose(fp_bc);
   fclose(fp_bn);
   fclose(fp_el);
+  fclose(fp_oc);
 }
 
 

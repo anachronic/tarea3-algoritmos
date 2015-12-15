@@ -8,6 +8,8 @@
 \usepackage{wrapfig}
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 
+\newtheorem*{definition}
+
 \frenchspacing
 \title{\Huge Diccionarios \\ Tarea 3 - Diseño y Análisis de Algoritmos \\ Informe}
 \author{Nicolás Salas V.}
@@ -98,6 +100,62 @@ Resumiendo:
 \item Los AVL ocupan más espacio que los Splay Tree y los ABB.
 \end{enumerate}
 
+\newpage
+\section{Marco Teórico}
+\label{sec:marco}
+
+En esta sección el objetivo es explicar las estructuras de datos y sus algoritmos, de manera de poder entender mejor las hipótesis, resolver las dudas que puedan haber quedado en la introducción y tener la base para poder entender el diseño experimental que se ha hecho para esta experiencia.\\
+
+En este experimento la implementación de diccionarios se ha hecho exclusivamente con árboles, de manera que frecuentemente se hablará de conceptos como \emph{nodo} y \emph{subárbol}. A continuación se explica lo que significa cada uno de estos conceptos.\\
+
+\textbf{def (Nodo)}: Un nodo es -en estricto rigor- un árbol, que contiene una llave y su información satélite. Frecuentemente se usa este término para hablar de las llaves y su información satélite más que para hablar de un árbol, en cuyo caso simplemente se dice árbol.\\
+
+\textbf{def (Nodo interno)}: A un nodo se le dice interno si es que tiene al menos un hijo.\\
+\textbf{def (Nodo hoja)}: A un nodo se le dice hoja si es que no tiene hijos. Esto es, si sus dos hijos son \texttt{NULL}.\\
+
+\textbf{def (Subárbol)}: Dado que un nodo tiene dos hijos, se define un subárbol como el árbol izquierdo o árbol derecho de un nodo. Este tipo de definición recursiva es la que permite buscar en árboles, y en general, hacer operaciones sobre ellos.\\
+
+
+\subsection{Árbol de Búsqueda Binaria}
+\label{subsec:marco_abb}
+Como se explicaba, un árbol de búsqueda binaria (en adelante \emph{ABB}) es una estructura que guarda una clave comparable a otras claves e información satélite. En el caso de esta tarea, por tratarse de implementaciones de diccionarios y \texttt{C}, la información satélite es un puntero a lo que sea (o sea, un \texttt{void*}) y el tamaño de lo que hay dentro. Al conjunto de la clave, la información satélite y su tamaño se les ha denominado \texttt{entry}. En el código fuente también existe esta estructura. Por esta razón, un nodo en un ABB se compone de una entry y sus dos hijos.\\
+
+Entonces, se necesita 3 algoritmos esenciales para operar sobre árboles: Búsqueda, Inserción y Eliminación.
+
+\subsubsection{Búsqueda}
+Supóngase que se busca una llave $K$ sobre un ABB. Entonces, se compara la \emph{key de la entry del nodo} contra $K$. Si $K$ fuese menor que la key del nodo, se vuelve a buscar en el subárbol izquierdo, de ser mayor se busca en el subárbol derecho. En caso de que sean iguales, simplemente se retorna la información satélite, que es lo que se buscaba en un principio.\\
+
+Si se llegara a un nodo vacío, es decir que \texttt{nodo == NULL} evalúa a \texttt{true}, entonces el elemento no estaba, y por lo tanto se retorna \texttt{NULL}.
+
+\subsubsection{Inserción}
+La inserción es bastante parecida a la búsqueda. Supóngase que se quiere insertar un par $(K,V)$ en un árbol, en donde se conoce $|V|$. Entonces se procede a buscar el elemento, pero esta vez, al llegar a un nodo vacío se crea un nuevo nodo, que contiene la tripleta $(K, V, |V|)$ y se cuelga del árbol por donde se realizó la búsqueda.\\
+
+De existir la clave previamente en el árbol, se reemplaza lo que había antes por lo que se está tratando de insertar. Este es el comportamiento de la mayoría de los diccionarios modernos, así que se acepta.
+
+\subsubsection{Eliminación}
+La eliminación es el algoritmo más complicado, pero no tanto. En este apartado se usará frecuentemente la frase \emph{colgar un árbol a otro}, que significa asignar un árbol a un subárbol de un nodo.\\
+
+Para eliminar $K$ y toda su información satélite de un ABB se divide en casos. Sea \textbf{nodo} el nodo donde se ha encontrado el elemento que se quiere eliminar.
+
+\textbf{\underline{Si el nodo es raíz}} se elimina el nodo y ya está.
+\textbf{\underline{Si el nodo es interno pero tiene un sólo hijo}} entonces del padre nodo, en vez de colgar el hijo que estaba antes se cuelga el hijo del nodo interno, que ya se sabe que es uno sólo.
+\textbf{\underline{Si el nodo es interno y tiene dos hijos}} entonces del árbol derecho se pide \textbf{el hijo más a la izquierda} y se reemplazan los nodos. El nodo que entregó su información debe eliminarse del árbol, de manera que esta operación puede necesitar borrar recursivamente.\\
+
+Por último, si la clave no estaba en ningún nodo, entonces no había nada que hacer en primer lugar.
+
+\subsection{Árbol AVL}
+Un AVL es igual que un ABB, excepto que se autobalancea haciendo lo que se llaman rotaciones. De hecho, estas rotaciones merecen ser tratadas aparte, pues no sólo las usan los árboles AVL, sino que otros también, como por ejemplo los Red-Black Trees y los Splay Trees, que se discuten en el próximo apartado. Es \textbf{altamente} recomendable que se lea la subsección de los anexos donde se discute lo que es una rotación.\\
+
+A grandes rasgos, no obstante, existen dos tipos de rotaciones: \emph{Horario} y \emph{Antihorario}, ellas hacen una suerte de \emph{shift} de los elementos en sentido horario u antihorario dependiendo de la rotación, y con ello cambian las alturas de los subárboles. En los AVL esto se usa para mantener la diferencia de altura de los dos subárboles hijos constante, pero como se verá en los Splay Trees, este no es el único uso de las rotaciones.
+
+\subsubsection{Búsqueda}
+La búsqueda en un AVL es tal cual se hace en un ABB, pues guardan la misma estructura. Por ello, no es necesario referirse a este algoritmo. Se puede ver en la subsección anterior, de los ABB.
+
+\subsubsection{Inserción}
+
+
+\subsection{Splay Tree}
+
 
 \newpage
 \section{Diseño Experimental}
@@ -120,18 +178,6 @@ Para este experimento es \textbf{crucial} no tener \emph{metadatos} asociados a 
 Y, aunque no sea imprescindible, siempre es deseable que el lenguaje sea rápido, para no esperar demasiado tiempo los resultados.\\
 
 Por lo anteriormente expuesto, el lenguaje que mejor calza con esto es \texttt{C}, aunque \texttt{C++} hubiese hecho el trabajo igual de bien. Escoger C sobre C++ es sólo por el dominio del autor de este informe sobre C. Además, la manipulación de bits necesaria para implementar los árboles de van Emde Boas es un beneficio al que no es fácil renunciar.
-
-\subsection{Detalles de Implementación}
-\label{subsec:detalles}
-En este apartado se muestra cómo se han implementado las distintas estructuras de datos, indicando cuando corresponda por qué se ha decidido así. Los algoritmos de cada estructura se exponen en pseudocódigo, de ser necesario, en los apéndices se incluye el código real en \texttt{C} de los algoritmos que necesiten explicación más profunda.
-
-\subsubsection{Árbol de Búsqueda Binaria}
-
-\subsubsection{Árbol AVL}
-
-\subsubsection{Splay Tree}
-
-\subsubsection{Árbol de van Emde Boas}
 
 
 \subsection{Casos de Prueba}
@@ -196,7 +242,7 @@ Los punteros tienen tipos, es decir, un puntero puede apuntar hacia una direcci�
 
 Para este trabajo, los punteros son importantes porque permiten \emph{desacoplar} el espacio en el que habita una estructura de datos grandes, es decir, no es necesario que los datos residan en bloques continuos de memoria, gracias a los punteros, se puede acceder a estos datos sin tener que duplicar las entradas de cada nodo en los árboles.\\
 
-Los punteros son un área compleja y muy interesante de los lenguajes de programación. El profesor Jerry Cain en Stanford explica el concepto bastante bien en las clases del curso CS107 - Programming Paradigms, que se puede ver en YouTube: https://www.youtube.com/watch?v=jTSvthW34GU&list=PL9D558D49CA734A02.
+Los punteros son un área compleja y muy interesante de los lenguajes de programación. El profesor Jerry Cain en Stanford explica el concepto bastante bien en las clases del curso CS107 - Programming Paradigms, que se puede ver en YouTube: https://www.youtube.com/watch?v=jTSvthW34GU\&list=PL9D558D49CA734A02.
 
 \subsubsection{Estructura de Datos}
 Una estructura de datos es un conjunto de datos que se agrupan en otro. Puede parecer no muy potente al principio, pero añadiendo el concepto de recursión y punteros es posible potenciarlas bastante, y es precisamente esta funcionalidad del lenguaje \texttt{C} la que permite escribir árboles tan fácilmente. Supóngase que se necesita crear una estructura árbol que almacene números, entonces lo único que hay que hacer es lo siguiente:
