@@ -42,14 +42,13 @@ El objetivo de este informe es comparar las implementaciones de diccionarios med
 \item \'Arbol de b\'usqueda binaria
 \item \'Arbol AVL
 \item Splay Tree
-\item \'Arbol de Van Emde Boas
 \end{itemize}
 
-Interesa -como en cualquier experimento de eficiencia de estructuras- saber cu\'al es la mejor estructura posible para implementar diccionarios. De nuevo, el experimento es entre las cuatro estructuras antes mencionadas. Hay otras estructuras que implementan diccionarios que pueden ser mejores, pero se quiere evaluar estas cuatro.\\
+Interesa -como en cualquier experimento de eficiencia de estructuras- saber cu\'al es la mejor estructura posible para implementar diccionarios. De nuevo, el experimento es entre las cuatro estructuras antes mencionadas. Hay otras estructuras que implementan diccionarios que pueden ser mejores, pero se quiere evaluar estas tres.\\
 
 Aunque lo ideal sería encontrar una estructura que fuese mejor que todas las otras, esto probablemente no ocurrirá\footnote{Sobre esto se discute en la próxima sección, de Hipótesis.}, debido a las implementaciones de cada estructura. Con esa limitante, interesa saber cuáles son las mejores estructuras para qué casos.\\
 
-Para partir, se expone un pequeño resumen de cada estructura de datos, que se analizarán a fondo en la sección de Diseño Experimental. Se asumen conocimientos básicos de computación, en particular se asume que se conoce lo que es una estructura de datos, lo que significa recursividad y dominio básico de punteros. En los anexos se muestra dónde se puede investigar lo que son estos conceptos.\\
+Para partir, se expone un pequeño resumen de cada estructura de datos, que se analizarán a fondo en la sección de Marco Teórico. Se asumen conocimientos básicos de computación, en particular se asume que se conoce lo que es una estructura de datos, lo que significa recursividad y dominio básico de punteros. En los anexos se muestra dónde se puede investigar lo que son estos conceptos.\\
 
 \subsection{Árbol de Búsqueda Binaria}
 \label{subsec:expl_abb}
@@ -63,12 +62,7 @@ Un Árbol AVL es un árbol de búsqueda binaria, pero que rearregla sus elemento
 \subsection{Splay Tree}
 \label{subsec:expl_splay}
 
-Un Splay Tree es un árbol de búsqueda binaria que no se preocupa de mantenerse balanceado\footnote{En cierto modo, sí lo hace, pero esta perspectiva se abordará en la sección de Diseño Experimental.}, sino que su preocupación principal es mantener los elementos accesados con mayor frecuencia \emph{más arriba} en el árbol. Es decir, minimiza el número de comparaciones (o, dicho de otra manera, accesos a nodos) para elementos que son buscados frecuentemente.
-
-\subsection{Árbol de Van Emde Boas}
-\label{subsec:expl_veb}
-
-Un Árbol de Van Emde Boas es.. \texttt{Pendiente}.
+Un Splay Tree es un árbol de búsqueda binaria que no se preocupa de mantenerse balanceado\footnote{En cierto modo, sí lo hace, pero esta perspectiva se abordará en el Marco Teórico.}, sino que su preocupación principal es mantener los elementos accesados con mayor frecuencia \emph{más arriba} en el árbol. Es decir, minimiza el número de comparaciones (o, dicho de otra manera, accesos a nodos) para elementos que son buscados frecuentemente.
 
 \subsection{Mediciones}
 \label{subsec:mediciones}
@@ -83,8 +77,6 @@ Los Splay Tree no se quedan en la noción de que todo árbol debe ser balanceado
 
 Sobre los Árboles de Búsqueda Binaria (en adelante \emph{ABB}) y AVL es sabido que los ABB tienen casos degenerados en los que se comportan como si fuesen listas enlazadas, esto pasa específicamente cuando los elementos se insertan ordenadamente. Este es un caso más bien extraño, pero en ningún momento imposible, de manera que los AVL son mejores que los ABB para casos degenerados. Sin embargo, en la teoría los AVL son mejores que los ABB, porque sus costos son siempre $O(\log n)$, pero lo que la notación obvía, es que existe un costo adicional -en la literatura es conocido como \emph{overhead}- asociado a el rebalanceo en la inserción y borrado. Los experimentos deberían indicar que, en promedio, los AVL se demoran más en insertar y borrar que los ABB.\\
 
-Respecto de los Van Emde Boas, deberían ser los árboles que lo hagan más rápido de todos al poder \emph{mapear} los posibles inputs a un conjunto \emph{discreto}, sin embargo el espacio que ocupan estos árboles es \textbf{gigante}, puesto que siempre asumen que todo el ``universo'' estará presente. Es decir, deberían tener siempre el peor almacenamiento, pero la búsqueda más rápida.\\
-
 Sobre el espacio, el árbol AVL ocupa $O(1)$ espacio más que un ABB convencional por nodo, puesto que cada uno debe almacenar su altura para poder rebalancearse, esto hace que los AVL sean más pesados que los ABB. Por otro lado, los Splay Tree no tienen overhead asociado al espacio, puesto que el reordenamiento de nodos no implica necesariamente rebalanceo, así que para espacio los Splay Tree deberían tener siempre el mismo espacio que los ABB.\\
 
 La discusión anterior puede dar una última hipótesis sobre los Splay Tree comparados con los ABB. Entre ellos dos no hay diferencias de espacio, y respecto de los costos de las operaciones, ABB tiene costo \textbf{promedio} $O(n)$, mientras que los Splay Tree tienen costo \textbf{amortizado} $O(n)$. Vale la pena discutir cuál es mejor usar en la práctica, porque ambos costos son conceptualmente muy parecidos, y ambos ocupan el mismo espacio para la estructura de datos. Para conjeturar, los Splay Tree debieran ser mejores que los ABB \textbf{si es que no se sabe nada del input}, pero los ABB deberían ser mejor si se tiene la certeza de que el input viene desordenado.\\
@@ -94,9 +86,7 @@ Resumiendo:
 \begin{enumerate}
 \item Un Splay Tree se comporta mejor si hay elementos con mayores probabilidades de acceso que otros.
 \item Un AVL es mejor en casos degenerados con probabilidades uniformes (o desconocidas) de acceso.
-\item El Van Emde Boas es el árbol más rápido de todos en un universo discreto de llaves.
 \item El mejor espacio está entre ABB y Splay Tree.
-\item El peor espacio lo tiene van Emde Boas.
 \item Los AVL ocupan más espacio que los Splay Tree y los ABB.
 \end{enumerate}
 
@@ -111,6 +101,7 @@ En este experimento la implementación de diccionarios se ha hecho exclusivament
 \textbf{def (Nodo)}: Un nodo es -en estricto rigor- un árbol, que contiene una llave y su información satélite. Frecuentemente se usa este término para hablar de las llaves y su información satélite más que para hablar de un árbol, en cuyo caso simplemente se dice árbol.\\
 
 \textbf{def (Nodo interno)}: A un nodo se le dice interno si es que tiene al menos un hijo.\\
+
 \textbf{def (Nodo hoja)}: A un nodo se le dice hoja si es que no tiene hijos. Esto es, si sus dos hijos son \texttt{NULL}.\\
 
 \textbf{def (Subárbol)}: Dado que un nodo tiene dos hijos, se define un subárbol como el árbol izquierdo o árbol derecho de un nodo. Este tipo de definición recursiva es la que permite buscar en árboles, y en general, hacer operaciones sobre ellos.\\
@@ -135,10 +126,10 @@ De existir la clave previamente en el árbol, se reemplaza lo que había antes p
 \subsubsection{Eliminación}
 La eliminación es el algoritmo más complicado, pero no tanto. En este apartado se usará frecuentemente la frase \emph{colgar un árbol a otro}, que significa asignar un árbol a un subárbol de un nodo.\\
 
-Para eliminar $K$ y toda su información satélite de un ABB se divide en casos. Sea \textbf{nodo} el nodo donde se ha encontrado el elemento que se quiere eliminar.
+Para eliminar $K$ y toda su información satélite de un ABB se divide en casos. Sea \textbf{nodo} el nodo donde se ha encontrado el elemento que se quiere eliminar.\\
 
-\textbf{\underline{Si el nodo es raíz}} se elimina el nodo y ya está.
-\textbf{\underline{Si el nodo es interno pero tiene un sólo hijo}} entonces del padre nodo, en vez de colgar el hijo que estaba antes se cuelga el hijo del nodo interno, que ya se sabe que es uno sólo.
+\noindent \textbf{\underline{Si el nodo es raíz}} se elimina el nodo y ya está.\\
+\textbf{\underline{Si el nodo es interno pero tiene un sólo hijo}} entonces del padre nodo, en vez de colgar el hijo que estaba antes se cuelga el hijo del nodo interno, que ya se sabe que es uno sólo. \\
 \textbf{\underline{Si el nodo es interno y tiene dos hijos}} entonces del árbol derecho se pide \textbf{el hijo más a la izquierda} y se reemplazan los nodos. El nodo que entregó su información debe eliminarse del árbol, de manera que esta operación puede necesitar borrar recursivamente.\\
 
 Por último, si la clave no estaba en ningún nodo, entonces no había nada que hacer en primer lugar.
@@ -152,9 +143,37 @@ A grandes rasgos, no obstante, existen dos tipos de rotaciones: \emph{Horario} y
 La búsqueda en un AVL es tal cual se hace en un ABB, pues guardan la misma estructura. Por ello, no es necesario referirse a este algoritmo. Se puede ver en la subsección anterior, de los ABB.
 
 \subsubsection{Inserción}
+La inserción al principio se hace igual que en un ABB. Esto es, se busca infructuosamente un elemento hasta la hoja que corresponda y se crea un nuevo nodo con la información que se requiere. Pero como los AVL mantienen la diferencia de sus subárboles constante, existe la posibilidad que al insertar un nuevo elemento la diferencia aumente de tamaño, en cuyo caso se debe rebalancear. Para hacer esto se hacen rotaciones, en la que se escoge el tipo de rotación dependiendo del árbol que tenga más altura. O sea, si el árbol derecho tiene más altura que el izquierdo se hace una rotación antihorario y viceversa.\\
 
+Como el objetivo de este informe no es teorizar sobre los árboles AVL, ni árboles en general, sino que el objetivo es evaluar las fortalezas de cada estructura, una \textbf{buena} explicación de cómo se escogen las rotaciones se puede encontrar en http://kukuruku.co/hub/cpp/avl-trees.\\
+
+De nuevo, las rotaciones se explican en un apartado de los Anexos.
+
+\subsubsection{Eliminación}
+Para eliminar una clave $K$ y su información satélite se procede como sigue: Elimínese el nodo tal cual un ABB, pero en cada paso se retorna \texttt{balancear(T)}, en que $T$ corresponde a un árbol bajo el camino por donde se extrajo el mínimo elemento del subárbol derecho.\\
+
+De nuevo, la mejor explicación de este algoritmo se puede encontrar en http://kukuruku.co/hub/cpp/avl-trees.
 
 \subsection{Splay Tree}
+Ya se discutía en la introducción que un Splay Tree tiene como objetivo minimizar la búsqueda de elementos frecuentes en la estructura. Para esto, los Splay Trees tienen una operación clave que los diferencia de los ABB, la cual se le llamará \emph{splay}. Antes de describir los algoritmos de inserción, borrado y búsqueda, primero se describe qué hace Splay.
+
+\subsubsection{Splay}
+Esta función revisa los elementos dos niveles más abajo sobre el que se está haciendo la recursión. En este apartado sólo se describirá el algoritmo para el caso general, donde existen dichos elementos. Para una descripción detallada, se pueden revisar los anexos, donde se explicita el código de esta función.\\
+
+Sea $K$ la clave a llevar a la raíz. Entonces, si la clave está en la raíz, se retorna, pues se ha cumplido el objetivo. Si no, puede estar en cualquiera de los dos subárboles $T_i$ y $T_r$, izquierdo y derecho respectivamente. Sea $H$ el árbol por donde está el elemento y nuevamente se compara la clave, en lo que se repite el procedimiento antes descrito. Supóngase que está en el lado derecho, entonces una rotación antihorario lo sube un nivel, mientras que si estaba por la izquierda una rotación horario lo sube un nivel. Con ello el elemento queda en la raíz del nuevo subárbol $H$. Si $H$ era el hijo derecho, entonces se hace una rotación antihorario, y si era el izquierdo se hace una rotación horario y finalmente el elemento queda en la raíz.\\
+
+A las rotaciones horario se les dice \emph{zig} para los Splay Tree, y a las antihorario se les dice \emph{zag}. De manera que existen 4 casos: \textbf{zig-zig}, \textbf{zig-zag}, \textbf{zag-zig} y \textbf{zag-zag}. La primera rotación denomina la que se hace sobre el hijo directo y la segunda marca la rotación que se hace sobre el ``nieto''. De nuevo, el código explícito se expone en los Anexos.
+
+
+\subsubsection{Búsqueda}
+Sea $K$ la clave a buscar en el Splay Tree $T$, entonces se hace \texttt{splay(T, K)} y se compara si el elemento en la raíz de $T$ es igual a $K$, si lo es, retornar su información satélite, si no, retornar \texttt{NULL}.
+
+\subsubsection{Inserción}
+La inserción es tal cual un ABB, excepto que después de insertar se hace \texttt{splay(T, K)} en que $K$ es la clave insertada y $T$ es el Splay Tree.
+
+\subsubsection{Eliminación}
+La eliminación en un Splay Tree es igual que en un ABB. En la literatura y teoría existen \textbf{muchas} formas de hacer eliminación sobre un Splay Tree, pero considerando que el objetivo de un Splay Tree es mantener siempre los elementos más accesados arriba, la eliminación normal de un ABB parece el enfoque correcto, pues no reordena mayormente los elementos del Splay Tree, como sí lo hacen las otras formas de eliminar.
+
 
 
 \newpage
@@ -214,6 +233,39 @@ Entonces, para cada espacio de pruebas, y para cada conjunto de cadenas el exper
 
 
 \section{Resultados}
+
+En esta sección se exponen los resultados, sin hacer ningún análisis de ellos. Como el espacio de pruebas es un poco grande, se ha tratado de maximizar la cantidad de información por cada gráfico, de manera de no atiborrar la presentación de los resultados. Se dividirá esta sección en dos subsecciones: \textbf{Caso Aleatorio} y \textbf{Caso Degenerado}.
+
+\subsection{Caso Aleatorio}
+\label{subsec:res_aleatorio}
+
+A continuación se exponen los resultados para el caso en que las cadenas insertadas en la estructura fueron generadas aleatoriamente, sin ningún tipo de pre ni postprocesamiento.\\
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{random_insercion.png}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{random_busquedanormal.png}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{random_busquedacargada.png}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{random_eliminacion.png}
+\end{center}
+\end{figure}
+
+
 \section{Análisis e Interpretación de los Datos}
 \section{Apéndices}
 \subsection{Dominio Básico}
@@ -260,14 +312,19 @@ Para investigar más sobre estructuras de datos se puede leer la entrada en Wiki
 \subsection{Ambiente de Ejecución}
 \label{subsec:ambiente}
 
-Entendiendo que los resultados varían dependiendo del procesador de la máquina donde se ejecuta el experimento, se incluyen las características del computador donde fue ejecutado el experimento.\\
+Entendiendo que los resultados varían dependiendo del procesador de la máquina donde se ejecuta el experimento, se incluyen las características del computador donde fue ejecutado el experimento.
+
+\begin{center}
 
 \begin{tabular}{ll}
   Sistema Operativo & Arch Linux, Kernel 4.2.5-1-ARCH\\
   Procesador & Intel Core i5-2500k @ 3.3 GHz\\
   Memoria Disponible & 12 GiB\\
   Tamaño de un puntero & 8 bytes (64 bits)\\
+  Compilador & GCC (GNU C Compiler) 5.2.0\\
+  Librería \texttt{C} & \texttt{glibc} (GNU C Library) 2.22 stable.
 \end{tabular}
+\end{center}
 
 Usalmente al tamaño de un puntero (en la jerga de arquiterctura se le conoce como tamaño de palabra, o \emph{word size}) se le denomina tipo del sistema. Los más comunes son 64 bits en las máquinas nuevas y 32 bits en las máquinas un poco más viejas.
 
@@ -308,6 +365,86 @@ Para obtener el texto de donde se han obtenido las secuencias de ADN se puede en
 \end{enumerate}
 
 Se entiende, luego de la descripción, por qué no se ha incluido este archivo junto con los fuentes, pues está disponible online y además pesa demasiado como para incluirlo en un entregable.
+
+\subsection{Rotaciones en Árboles Binarios}
+\label{subsec:rotaciones}
+
+Explicar rotaciones.
+
+\subsection{Explicitación de \emph{splay}}.
+\label{subsec:splay_anexos}
+
+A continuación se expone tal cual está implementada la función \emph{splay} para un Splay Tree. Está comentada, de manera que el seguimiento de lo que hace esta función es bastante simple.\\
+
+\begin{verbatim}
+static struct splay_nodo *_splay(struct splay_nodo *nodo, const char *key){
+  if(nodo == NULL) return NULL;
+
+  int cmp = strcmp(key, nodo->e->key);
+
+  // está en la raíz. (de este subárbol al menos)
+  // no hacemos zig, ni zag ni zigzag ni NADAAAAAAAAAAAAAAAAa
+  if(cmp == 0) return nodo;
+
+  if(cmp < 0){
+    // sabemos que está en el lado izquierdo
+    // no hay elementos a la izquierda? Termino el splay.
+    if(nodo->izq == NULL) return nodo;
+
+    int cmp2 = strcmp(key, nodo->izq->e->key);
+    // Veo por donde me voy
+    if (cmp2 < 0) {
+      // El nodo está por la izquierda (del subárbol izquierdo).
+      // Dejo el elemento en el hijo izquierdo de mi subárbol izquierdo
+      nodo->izq->izq = _splay(nodo->izq->izq, key);
+
+      // Lo quiero dejar en la raíz de mi subárbol izquierdo.
+      // Me hago zig sobre mí mismo y el elem queda en la raíz del subárbol izq.
+      nodo = _zig(nodo);
+    } else if (cmp2 > 0) {
+      // Si está por la derecha.. (del subárbol izquierdo)
+      // Se trae a la raíz del hijo derecho del subárbol izquierdo de nodo el elemento
+      // Cuando nodo->izq->der contiene al elemento (si existe) le hacemos zag para dejarlo
+      // en la raíz subárbol izquierdo.
+      nodo->izq->der = _splay(nodo->izq->der, key);
+      if (nodo->izq->der != NULL)
+        nodo->izq = _zag(nodo->izq);
+    }
+
+    // ya tengo el elemento en la raíz de mi subárbol izquierdo si existe.
+    // si existe, un zig me lo deja en la raíz.
+    if (nodo->izq == NULL) return nodo;
+    return _zig(nodo);
+  }
+
+  // cmp > 0
+  if(nodo->der == NULL) return nodo;
+  
+  int cmp3 = strcmp(key, nodo->der->e->key);
+  if(cmp3 > 0){
+    // está por la derecha del subárbol derecho
+    // primero dejo el elemento en la raíz del hijo derecho de mi subárbol derecho
+    nodo->der->der = _splay(nodo->der->der, key);
+
+    // cuando ya está ahí, hago zag sobre mí mismo y lo dejo en la raíz de mi subárbol derecho.
+    nodo = _zag(nodo);
+  } else if (cmp3 < 0) {
+    // Está por la izquierda de mi subárbol derecho.
+    // Lo llevo a la raíz del hijo izquierdo de mi subárbol derecho primero
+    nodo->der->izq = _splay(nodo->der->izq, key);
+
+    // Lo quiero dejar en la raíz de mi subárbol derecho. Zig sobre nodo->der
+    if(nodo->der->izq != NULL)
+      nodo->der = _zig(nodo->der);
+  }
+
+  // Lo tengo listo. Si existe, está en nodo->der
+  // y un zag sobre mí mismo lo deja en la raíz.
+  if(nodo->der == NULL) return nodo;
+  return _zag(nodo);
+}
+\end{verbatim}
+
 
 
 \end{document} 
