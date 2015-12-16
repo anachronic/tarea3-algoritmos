@@ -79,7 +79,7 @@ Sobre los Árboles de Búsqueda Binaria (en adelante \emph{ABB}) y AVL es sabido
 
 Sobre el espacio, el árbol AVL ocupa $O(1)$ espacio más que un ABB convencional por nodo, puesto que cada uno debe almacenar su altura para poder rebalancearse, esto hace que los AVL sean más pesados que los ABB. Por otro lado, los Splay Tree no tienen overhead asociado al espacio, puesto que el reordenamiento de nodos no implica necesariamente rebalanceo, así que para espacio los Splay Tree deberían tener siempre el mismo espacio que los ABB.\\
 
-La discusión anterior puede dar una última hipótesis sobre los Splay Tree comparados con los ABB. Entre ellos dos no hay diferencias de espacio, y respecto de los costos de las operaciones, ABB tiene costo \textbf{promedio} $O(n)$, mientras que los Splay Tree tienen costo \textbf{amortizado} $O(n)$. Vale la pena discutir cuál es mejor usar en la práctica, porque ambos costos son conceptualmente muy parecidos, y ambos ocupan el mismo espacio para la estructura de datos. Para conjeturar, los Splay Tree debieran ser mejores que los ABB \textbf{si es que no se sabe nada del input}, pero los ABB deberían ser mejor si se tiene la certeza de que el input viene desordenado.\\
+La discusión anterior puede dar una última hipótesis sobre los Splay Tree comparados con los ABB. Entre ellos dos no hay diferencias de espacio, y respecto de los costos de las operaciones, ABB tiene costo \textbf{promedio} $O(\log n)$, mientras que los Splay Tree tienen costo \textbf{amortizado} $O(\log n)$. Vale la pena discutir cuál es mejor usar en la práctica, porque ambos costos son conceptualmente muy parecidos, y ambos ocupan el mismo espacio para la estructura de datos. Para conjeturar, los Splay Tree debieran ser mejores que los ABB \textbf{si es que no se sabe nada del input}, pero los ABB deberían ser mejor si se tiene la certeza de que el input viene desordenado.\\
 
 Resumiendo:
 
@@ -207,8 +207,6 @@ El objetivo de los casos de prueba es mostrar la fortalezas y debilidades de cad
 \item Mostrar que los Splay Tree son mejores que las otras implementaciones cuando las probabilidades de acceso no son uniformes.
 \item Mostrar que los AVL son mejores que los ABB en casos degenerados
 \item Mostrar que los ABB y Splay Tree ocupan el mismo espacio.
-\item El van Emde Boas es el más rápido de todos.
-\item El van Emde Boas siempre ocupa más espacio que los otros.
 \item Los AVL ocupan más espacio que los Splay Tree y ABB.
 \end{itemize}
 
@@ -336,7 +334,107 @@ Hay muchos resultados que se parecen en los gráficos que se presentaron. Para a
 
 \newpage
 \section{Análisis e Interpretación de los Datos}
+En esta sección se analizan los resultados para ver si concuerdan o no con las hipótesis, y se da explicaciones de por qué sí, o por qué no, en cada caso. Primero se partirá analizando las hipótesis una por una, luego se analizará otros resultados no previstos por las hipótesis, después se discutirá qué pasó con el caso degenerado del ABB y finalmente se presentarán las conclusiones finales.\\
 
+\subsection{Splay Tree es mejor cuando las probabilidades de acceso no son uniformes}
+\label{subsec:analisis_splaytree}
+Esta es una hipótesis que sale \textbf{destruida} con los resultados presentados. En el espacio de elementos generados al azar, el splay tree \textbf{no es mejor en ningún caso}. En cambio, para el caso degenerado la inserción sale \textbf{5} veces más barata que en un AVL, pero las hipótesis son sobre búsqueda.\\
+
+Cabe preguntarse entonces, ?`Qué falló en las hipótesis?. Pues bien, en la introducción se planteó que un Splay Tree mantiene los elementos más accesados cercanos a la raiz, y en la hipótesis de este caso se usó dicha suposición para concluir que lo que se busca siempre está a mano. El error está en que la suposición inicial de la introducción \textbf{no es cierta}, pues el Splay Tree sólo mantiene el último elemento accesado en la raíz, si para eso es necesario bajar el penúltimo elemento accesado a una hoja, el Splay Tree lo hace. Esto muestra por qué la hipótesis es incorrecta, y marca un nuevo punto de inicio para otro experimento, que queda fuera del alcance de este informe: Accesar al mismo elemento muchas veces es más rápido en un Splay Tree que en cualquier otro tipo de árbol.
+
+\subsection{El AVL es mejor en casos degenerados}
+\label{subsec:analisis_avl_degenerado}
+Los resultados son un poco ambiguos en este caso. Ya se discutía en el análisis anterior que insertar en un Splay Tree sale 5 veces más barato que insertar en un AVL. Esto es simple de analizar, por un lado, el AVL siempre debe rebalancearse al insertar elementos, o sea, el AVL siempre está balanceado, y sería incorrecto decir que una inserción desbalancea el árbol sólo a veces, pues el evento es más bien frecuente que infrecuente, esto puede ocasionar una \emph{cadena de rebalanceos} gigante en algunos casos, agregando un \emph{overhead} al tiempo que se empieza a notar directamente cuando la cantidad de elementos ronda los $2^{16}$.\\
+
+Por otro lado, el Splay Tree no se preocupa de balancear en todo momento, sino que simplemente aplica \emph{splay} sobre el árbol cada vez que se inserta un elemento. Esto es especialmente ventajoso comparado a un AVL, porque la inserción en un subárbol con menor altura que su hermano provoca splays más chicos, y esto explica por qué insertar es más barato en un Splay Tree que en un AVL para casos degenerados, pues naturalmente que el Splay Tree estará más desbalanceado a la hora de insertar cadenas que vengan ordenadas.\\
+
+En búsqueda el AVL ciertamente que sale mejor parado que el Splay Tree, incluso en los casos donde las probabilidades de acceso están cargadas, que es el caso que se discutió anteriormente. Es natural que el AVL gane en este caso, que es donde iba enfocada la hipótesis, y hasta cierto punto lo de la inserción también era esperable, pues el tiempo asociado a rebalancear el árbol es $O(\log n)$, pero simplemente tiene una constante más grande asociada, mientras que para búsqueda no hay balance, y por lo tanto en este caso la búsqueda \textbf{siempre} le ganará, o en el peor caso empatará con cualquier tipo de árbol\footnote{Lo más probable es que empate contra un Red-Black Tree, pero esa estructura no se estudia en este informe.}.\\
+
+Para cerrar el estudio de esta hipótesis, en eliminación pasa lo mismo que en inserción. El AVL se tiene que rebalancear después de un borrado, mientras que el Splay Tree no lo hace, por ello el AVL nuevamente se demora 5 veces más que un Splay Tree en eliminar todos los elementos.
+
+\subsection{Espacio de las estructuras}
+\label{subsec:analisis_ocupacion}
+Esta hipótesis sale confirmada luego del experimento, el AVL ocupa más espacio que ABB y que Splay Tree, y esto es precisamente porque el AVL almacena un elemento más en su estructura, que corresponde a 4 bytes que almacenan la altura del nodo. En retrospectiva, este valor puede perfectamente ser un \texttt{short}, e incluso un \texttt{char}, pues como la altura \textbf{siempre} es logarítmica en un AVL, entonces no se necesitan tantos bytes para representar este número. De hecho, se puede ver que la diferencia entre AVL y los otros dos es de alrededor de 10 MB, en tanto que para $2^{21}$ nodos multiplicados por 4 bytes cada uno, el espacio ocupado corresponde a cerca de 8 MB. Resultado consistente con la hipótesis.\\
+
+Por otro lado, los resultados de ocupación de ABB contra Splay Tree son abismantemente sorprendentes, confirmando aún más la hipótesis planteada. Para ver que esto efectivamente es así, se muestra una tabla de los valores de ocupación para cantidad de elementos $2^k; k\in \{18, 19, 20, 21\}$.\\
+
+Nota: Los resultados están en \textbf{bytes}. Pues como se ve, la diferencia en kB es mínima.
+
+\begin{center}
+  \begin{tabular}{|l|r|r|r|r|}
+    \hline
+    Elementos & ABB Real & Splay Tree Real & ABB Sintético & Splay Tree Sintético\\ \hline
+    $2^{18}$ & 16187475.29 & 16186707.64 & 16775053.82 & 16775298.18 \\ \hline
+    $2^{19}$ & 31948190.59 & 31943612.36 & 33546143.27 & 33546184.00 \\ \hline
+    $2^{20}$ & 62873152.47 & 62869616.73 & 67076005.09 & 67075912.00 \\ \hline
+    $2^{21}$ & 123257995.76 & 123250882.18 & 134086169.45 & 134086553.45 \\ \hline
+  \end{tabular}
+\end{center}
+
+\subsection{Otros resultados}
+\label{subsec:analisis_misc}
+\subsubsection{Costo Amortizado de un Splay Tree}
+Se discutió en la introducción que el costo de las operaciones en un Splay Tree es $O(\log n)$ \textbf{amortizado}, pero no se diseñó ningún experimento apuntando a ello, o apuntando a medir si el costo realmente es así.\\
+
+Afortunadamente, el input escogido arrojó este resultado por sí sólo, y como se puede ver, este resultado es \textbf{valiosísimo}. Recuérdese que costo amortizado es un resultado sobre un número de operaciones, y no sobre una en particular, es decir, para un Splay Tree lo realmente verdadero es que $n$ operaciones cuestan $O(n\log n)$, y el resultado en el caso degenerado muestra \emph{exactamente} eso. Al principio se ve que el costo de buscar una cantidad pequeña de elementos es muy caro respecto de un AVL, pero ese costo luego ``se estabiliza'', y a partir de $2^4$ hasta cerca de $2^{15}$ elementos en la estructura, el costo de búsqueda es \textbf{constante}. Ojo con ello, pues constante no implica rápido (de hecho, aunque sea constante, sigue siendo peor que el AVL \textbf{en ese rango}). Finalmente, los costos aumentan a partir de $2^{15}$ lentamente hasta empatar, e incluso ser más bajos que un AVL en el caso \textbf{real} para grandes cantidades de elementos buscados.\\
+
+Por otro lado, el AVL sigue una ley simple, buscar en él tiene costo $O(\log n)$ y ya está.
+
+\subsection{El fallo del ABB en el caso degenerado}
+\label{subsec:analisis_abb_degenerado}
+
+Se explicaba que ejecutar el programa sin cambiar los límites en una máquina decente genera un stack overflow para el caso de ABB degenerado. ?`Por qué?\\
+
+Recuérdese (y esto es sutil), que los algoritmos para implementar las operaciones que definen un árbol son todas recursivas, y esto implica que cada llamada nueva a una función recursiva aumenta el stack en la suma del tamaño de cada variable definida en la función más espacio $O(1)$ asociado a registros y cosas que no interesan en el alcance de este informe. Entonces, la recursión funciona bastante bien cuando la cantidad de veces que se vuelve a llamar a la función es relativamente aceptable, por ejemplo para 500.000 veces, debería seguir siendo válido.\\
+
+Por lo antes explicado, es lógico que el programa genere un stack overflow. Es \textbf{muy} distinto hacer 21 llamadas recursivas (árbol totalmente balanceado) versus $2^{21}$ (árbol completamente degenerado). De hecho, la diferencia es abismante, y al hacer dicha cantidad de llamadas recursivas, es lógico que el stack crezca demasiado, no pudiendo cumplir con los requerimientos del programa.\\
+
+Después de lo anterior queda la pregunta, ?`Entonces, por qué no aumentar el tamaño del stack y medir incluso de esa manera?\\
+
+La respuesta es algo intrincada, pero el screenshot expuesto en los resultados muestra que la aplicación estuvo corriendo 32 minutos. Sin embargo, hasta antes de mandar la interrupción al programa, éste llevaba alrededor de 47 minutos, sin siquiera terminar de insertar todos los elementos dentro del árbol\footnote{Desafortunadamente carezco de pruebas para esta afirmación, pero no estoy mintiendo.}. Un caso real hubiese implicado, haciendo una estimación no científica, cerca de 2 horas. Multiplicado por 10, que es la cantidad mínima aceptable de iteraciones para este experimento da 20 horas, que todavía sigue siendo un parámetro aceptable, pero si ya se sabe (según el tiempo que llevaba el programa) que el ABB en el caso degenerado se comporta mal, y ojo, que \textbf{esto comprueba la hipótesis de que el ABB es pésimo en casos degenerados}, ?`Es realmente necesario incluir un gráfico que muestre que la estructura es mala para dicho caso?\\
+
+La respuesta que asumo\footnote{Aquí escribo explícitamente en primera persona, asumiendo la responsabilidad sobre la afirmación.}, como estudiante, es que \textbf{no}.
+
+\subsection{Conclusiones Finales}
+\label{subsec:conclusiones}
+
+De este experimento se pueden sacar varias conclusiones, algunas de las cuales pueden quedar como hipótesis para futuros experimentos\footnote{Incluso tareas de CC4102, o CC3001.}. Lo primero es que un Splay Tree no sirve para elementos con distintas probabilidades de acceso, pues no ordena los elementos según su orden de acceso, quizás se puede crear una \emph{Splay Linked List}, pero eso es otra historia.\\
+
+El overhead de un AVL es insignificante, y en caso de ser preocupante se puede disminuir usando tipos de datos que ocupen menos espacio (e.g.: \texttt{char}). De ser significativo este dígito, se está entrando en un problema de memoria secundaria, que se puede resolver vía Árboles B.\\
+
+No existe diferencia significativa entre cadenas generadas al azar y cadenas reales (en este caso, extraídas desde \emph{genes}), pero sí que hace diferencia degenerar un conjunto de cadenas e insertarlas ordenadamente.\\
+
+No existe la mejor estructura en todos los casos, aunque el AVL parece que es mejor que el Splay Tree y que el ABB en general. No obstante, se puede generar una tabla para mostrar qué estructura usar en qué casos.
+
+\subsubsection{Si se tiene certeza de que el input no está degenerado}
+\begin{center}
+  \begin{tabular}{|l|c|}
+    \hline
+    Procedimiento a Optimizar & Mejor estructura \\ \hline
+    Inserción & ABB \\ \hline
+    Búsqueda & AVL o ABB \\ \hline
+    Eliminación & ABB \\ \hline
+    Espacio & ABB o Splay Tree \\ \hline
+  \end{tabular}
+\end{center}
+
+\subsubsection{Si la probabilidad de que el input esté degenerado no es despreciable}
+\begin{center}
+  \begin{tabular}{|l|c|}
+    \hline
+    Procedimiento a Optimizar & Mejor estructura \\ \hline
+    Inserción & Splay Tree \\ \hline
+    Búsqueda & AVL \\ \hline
+    Eliminación & Splay Tree \\ \hline
+    Espacio & Splay Tree \\ \hline
+  \end{tabular}
+\end{center}
+
+Además, tanto si el espacio de llaves es muy grande como si las llaves que existen en la estructura van a ser buscadas múltiples veces y \textbf{no} intercaladamente, la mejor estructura es el \textbf{Splay Tree}.\\
+
+Aunque parece que el ABB es una pésima solución, la primera tabla muestra que ello no es tan así. De hecho, el ABB es la mejor estructura para inputs no degenerados, pues no tiene overhead alguno y su diferencia en búsqueda contra un AVL es mínima, mientras que el espacio que usa se iguala a un Splay Tree.\\
+
+En cambio, para inputs que pueden venir degenerados la respuesta depende de lo que más importe, si se necesita que la estructura se llene rápidamente lo mejor es usar un Splay Tree, mientras que si se necesita una búsqueda eficiente para una estructura ya existente, AVL es la mejor opción.
 
 
 \newpage
@@ -442,7 +540,45 @@ Se entiende, luego de la descripción, por qué no se ha incluido este archivo j
 \subsection{Rotaciones en Árboles Binarios}
 \label{subsec:rotaciones}
 
-Explicar rotaciones.
+Una explicación gráfica de qué es una rotación se muestra en la siguiente figura:
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{rotaciones.jpg}
+\end{center}
+\end{figure}
+
+En la imagen, se denotan las rotaciones por \emph{left} y \emph{right}, pero la forma de las flechas, y el modo en que se hacen en conjunto con cómo se les denomina hace que horario y antihorario sean más intuitivos.\\
+
+Pártase desde el estado de la izquierda, en el que $p$ es un nodo que como hijo derecho tiene al árbol $C$, y su árbol izquierdo está compuesto por una raíz $q$, que tiene sus hijos $A$ y $B$. Entonces, tal como sugiere la figura, los elementos de $A$ son todos menores que $x$ (llave de $q$), que a su vez es menor que todos los elementos de $B$. Todos ellos son a su vez menores que la llave $y$ de la raíz principal, $p$. Finalmente, todos esos elementos son menores que los elementos en $C$.\\
+
+Entonces, si se deja a $q$ como raíz en vez de $p$, un árbol que cumple con esa condición es el que se muestra en la figura de la derecha. Note que esto cambia el balance del árbol. Esta estrategia se usa en los AVL para rebalancear árboles con mucha diferencia de altura entre sus dos hijos y en los Splay Tree se usan para llevar elementos hacia la raíz. Por ejemplo, una rotación Antihorario sube $q$ un nivel, dejando a $x$ como llave en la raíz.\\
+
+A las rotaciones right u horario, en los Splay Tree se les denomina \emph{zig}, mientras que a las left o antihorario se les denomina \emph{zag}. A continuación se muestra el código para zig y zag, respectivamente.\\
+
+\begin{verbatim}
+// zig: Rotación Horario
+// retorna el padre luego de hacer zig sobre nodo
+static struct splay_nodo *_zig(struct splay_nodo *nodo){
+  struct splay_nodo *nueva_raiz = nodo->izq;
+
+  nodo->izq = nueva_raiz->der;
+  nueva_raiz->der = nodo;
+  return nueva_raiz;
+}
+
+// zag: Rotación Antihorario
+// retorna el padre luego de hacer zag sobre nodo
+static struct splay_nodo *_zag(struct splay_nodo *nodo){
+  struct splay_nodo *nueva_raiz = nodo->der;
+
+  nodo->der = nueva_raiz->izq;
+  nueva_raiz->izq = nodo;
+  return nueva_raiz;
+}
+\end{verbatim}
+
+Aunque estas funciones están hechas para Splay Tree, el código que se usa en los AVL no difiere del que aquí se presenta, salvo que las estructuras involucradas son \texttt{avl\_nodo} en vez de \texttt{splay\_nodo}.
 
 \subsection{Explicitación de \emph{splay}}.
 \label{subsec:splay_anexos}
@@ -525,6 +661,25 @@ Junto con este informe se ha entregado los sources que permiten compilar y corre
 Dentro de la carpeta \texttt{graficos/} existe un archivo llamado \texttt{graficar.gp}, que contiene el script para generar todas las imagenes usando \texttt{gnuplot}. Sin embargo, y teniendo en cuenta que los resultados son independientes de la plataforma en la que se grafique, el binario entrega todos los resultados en archivos terminados en \texttt{.dat}, en que los nombres de los archivos indican a qué experimento corresponde. Con esos archivos se puede graficar en cualquier otro programa, con Excel, MATLAB, usando R, o la herramienta de preferencia de la persona interesada en reproducir los experimentos.\\
 
 No obstante, se recomienda usar \texttt{gnuplot}\footnote{http://www.gnuplot.info/}.
+
+\subsection{Resultados parecidos}
+\label{subsec:anexo_tablas}
+
+En este apartado se incluyen tablas para diferenciar resultados que se parecen mucho.
+
+\subsubsection{Medición de Ocupación}
+Ya se mostró esta tabla en la sección de interpretación de los resultados, pero se incluye por completitud.
+
+\begin{center}
+  \begin{tabular}{|l|r|r|r|r|}
+    \hline
+    Elementos & ABB Real & Splay Tree Real & ABB Sintético & Splay Tree Sintético\\ \hline
+    $2^{18}$ & 16187475.29 & 16186707.64 & 16775053.82 & 16775298.18 \\ \hline
+    $2^{19}$ & 31948190.59 & 31943612.36 & 33546143.27 & 33546184.00 \\ \hline
+    $2^{20}$ & 62873152.47 & 62869616.73 & 67076005.09 & 67075912.00 \\ \hline
+    $2^{21}$ & 123257995.76 & 123250882.18 & 134086169.45 & 134086553.45 \\ \hline
+  \end{tabular}
+\end{center}
 
 
 
