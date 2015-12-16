@@ -1,10 +1,10 @@
 #+TITLE: Tarea 3 - Diseño y Análisis de Algoritmos
 #+AUTHOR: Nicolás Salas V.
 
-* TODO Tarea 3 CC4102 [0%]
+* TODO Tarea 3 CC4102 [100%]
   DEADLINE: <2015-12-16 mié>
   
-** TODO Código [4/4]
+** DONE Código [4/4]
 
 Ok. No haremos Van Emde Boas. Mala... pero salva tiempo
 
@@ -28,12 +28,12 @@ Ok. No haremos Van Emde Boas. Mala... pero salva tiempo
 - [ ] Eliminación
 - [ ] Inserción
 
-** TODO Informe [83%]
+** DONE Informe [100%]
 - [X] Introducción
 - [X] Hipótesis
 - [X] Diseño Experimental
 - [X] Resultados
-- [ ] Análisis e Interpretación
+- [X] Análisis e Interpretación
 - [X] Anexos
 
 ** Experimentos
