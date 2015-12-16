@@ -107,6 +107,24 @@ plot 'avl_real_degenerado_eliminacion.dat' every ::1 u 1:2 w lp lw 2 dt 1 lc rgb
      'splaytree_real_degenerado_eliminacion.dat' every ::1 u 1:2 w lp lw 2 dt 1 lc rgb "blue" title 'Splay Tree Real', \
      'splaytree_sintetico_degenerado_eliminacion.dat' every ::1 u 1:2 w lp lw 2 dt 2 lc rgb "blue" title 'Splay Tree Sintético'
 
+
+set terminal pngcairo dashed enhanced font "Montaga-Bold,12"
+unset yrange
+unset xrange
+set title 'Ocupación'
+set xrange [65536:4194304]
+set ylabel 'Ocupación [kB]'
+set output 'ocupacion.png'
+plot 'abb_real_random_ocupacion.dat' every ::1 u 1:($2/1000) w lp lw 2 dt 1 lc rgb "red" title 'ABB Real', \
+     'abb_sintetico_random_ocupacion.dat' every ::1 u 1:($2/1000) w lp lw 2 dt 2 lc rgb "red" title 'ABB Sintético', \
+     'avl_real_random_ocupacion.dat' every ::1 u 1:($2/1000)  w lp lw 2 dt 1 lc rgb "#2E8B57" title 'AVL Real', \
+     'avl_sintetico_random_ocupacion.dat' every ::1 u 1:($2/1000) w lp lw 2 dt 2 lc rgb "#2E8B57" title 'AVL Sintético', \
+     'splaytree_real_random_ocupacion.dat' every ::1 u 1:($2/1000) w lp lw 2 dt 1 lc rgb "blue" title 'Splay Tree Real', \
+     'splaytree_sintetico_random_ocupacion.dat' every ::1 u 1:($2/1000) w lp lw 2 dt 2 lc rgb "blue" title 'Splay Tree Sintético'
+
+
 unset output
 unset terminal
+
+
 

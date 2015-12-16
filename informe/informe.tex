@@ -318,6 +318,22 @@ Como muestra el comando \texttt{top}, el proceso llevaba 32 minutos sin poder te
 
 Este resultado ciertamente que será discutido en la interpretación.
 
+\subsection{Ocupación}
+\label{subsec:res_ocupacion}
+
+Se puede ver en los archivos incluidos en el entregable que la ocupación es constante para un número dado de elementos, de manera que sólo existe un gráfico, el que se muestra a continuación
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{ocupacion.png}
+\end{center}
+\end{figure}
+
+\subsection{Resultados muy parecidos}
+\label{subsec:res_parecidos}
+
+Hay muchos resultados que se parecen en los gráficos que se presentaron. Para ayudar a entender mejor estos datos, en los Apéndices se muestra una tabla con los valores exactos de las mediciones.
+
 \newpage
 \section{Análisis e Interpretación de los Datos}
 
@@ -396,7 +412,7 @@ Entendiendo que siempre existe algo que genera \emph{ruido} en las mediciones de
 \item Uso de memoria externa en caso de necesitarla (por parte del Sistema Operativo)
 \end{itemize}
 
-Entonces, para normalizar estos datos se hace uso de la estadística. El objetivo es entregar el promedio de muchas mediciones, tal que el error asociado al promedio entregado no supere el 95\%. En adelante se dirá que un resultado es tal \emph{con un 95\% de confianza}. Para hacer esto se calculan los estimadores insesgados del promedio y la desviación estándar para los valores que se quiere calcular (en este caso, tiempo y espacio). Se repiten los experimentos hasta que el promedio ($\mu$) y la desviación estándar ($\sigma$) no superen el error esperado. Esto es, el 5\%. Matemáticamente se puede expresar de la siguiente forma.
+Entonces, para normalizar estos datos se hace uso de la estadística. El objetivo es entregar el promedio de muchas mediciones, tal que el error asociado al promedio entregado no supere el 5\%. En adelante se dirá que un resultado es tal \emph{con un 95\% de confianza}. Para hacer esto se calculan los estimadores insesgados del promedio y la desviación estándar para los valores que se quiere calcular (en este caso, tiempo y espacio). Se repiten los experimentos hasta que el promedio ($\mu$) y la desviación estándar ($\sigma$) no superen el error esperado. Esto es, el 5\%. Matemáticamente se puede expresar de la siguiente forma.
 
 \begin{align}
   \mu &= \sum_{i=1}^n X_i \nonumber \\

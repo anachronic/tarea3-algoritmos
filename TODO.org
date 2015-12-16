@@ -4,7 +4,9 @@
 * TODO Tarea 3 CC4102 [0%]
   DEADLINE: <2015-12-16 mié>
   
-** TODO Código [3/4]
+** TODO Código [4/4]
+
+Ok. No haremos Van Emde Boas. Mala... pero salva tiempo
 
 *** DONE ABB [3/3]
 - [X] Búsqueda
@@ -21,16 +23,16 @@
 - [X] Eliminación
 - [X] Inserción
 
-*** TODO Árbol de Van Emde Boas [0/3]
+*** DONE Árbol de Van Emde Boas [0/3]
 - [ ] Búsqueda
 - [ ] Eliminación
 - [ ] Inserción
 
-** TODO Informe [50%]
+** TODO Informe [83%]
 - [X] Introducción
 - [X] Hipótesis
-- [ ] Diseño Experimental
-- [ ] Resultados
+- [X] Diseño Experimental
+- [X] Resultados
 - [ ] Análisis e Interpretación
 - [X] Anexos
 
