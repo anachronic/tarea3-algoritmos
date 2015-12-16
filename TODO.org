@@ -1,7 +1,7 @@
 #+TITLE: Tarea 3 - Diseño y Análisis de Algoritmos
 #+AUTHOR: Nicolás Salas V.
 
-* TODO Tarea 3 CC4102 [100%]
+* DONE Tarea 3 CC4102 [100%]
   DEADLINE: <2015-12-16 mié>
   
 ** DONE Código [4/4]

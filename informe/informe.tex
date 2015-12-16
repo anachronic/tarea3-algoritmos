@@ -697,6 +697,13 @@ Al no haber diferencia significativa\footnote{Ver subsección de conclusiones fi
 
 Esta tabla muestra claramente que el AVL es más rápido en la búsqueda.
 
+\subsection{?`Y los Árboles de Van Emde Boas?}
+\label{subsec:vanemdeboas}
+
+El propósito original era, además de todos los árboles involucrados en este informe, incluir los árboles de Van Emde Boas en el análisis del caso, sin embargo esto no se hizo por asuntos de tiempo. De todos modos, este informe proporciona una visión bastante clara de qué estructura se debe usar en qué caso.\\
+
+Además, los árboles de Van Emde Boas, aunque proporcionan una complejidad bastante buena y se les puede reducir el espacio, siguen siendo malos para implementar diccionarios, por su limitante de tener que ser discretos. En principio es posible mapear un universo a enteros, de manera de poder tener la descompocisión $x = a\sqrt{n} + b$. Sin embargo, ello requeriría saber de antemano el largo de las cadenas que se van a insertar en la estructura y una función de mapeo, o de hash sin colisiones para cada llave de la estructura, sin mencionar todo lo que hay que tener detrás\footnote{Me refiero específicamente a las tablas de Perfect hashing e indirección.} para poder implementar diccionarios en universos discretos. Respecto de la rapidez de búsqueda, los AVL parecen lo suficientemente decentes para espacios que no requieren memoria secundaria. Esto hace que los árboles de van Emde Boas no se usen en la práctica tan frecuentemente como se desearía.
+
 
 
 
