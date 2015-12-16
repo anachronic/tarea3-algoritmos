@@ -231,12 +231,12 @@ Entonces, para cada espacio de pruebas, y para cada conjunto de cadenas el exper
 \item Eliminar en orden los elementos y para cada $2^k$, con $k\in \{2^{25} ... 0\}$, anotar la ocupación y el tiempo de eliminación de la estructura.
 \end{enumerate}
 
-
+\newpage
 \section{Resultados}
 
-En esta sección se exponen los resultados, sin hacer ningún análisis de ellos. Como el espacio de pruebas es un poco grande, se ha tratado de maximizar la cantidad de información por cada gráfico, de manera de no atiborrar la presentación de los resultados. Se dividirá esta sección en dos subsecciones: \textbf{Caso Aleatorio} y \textbf{Caso Degenerado}.
+En esta sección se exponen los resultados, sin hacer ningún análisis de ellos. Como el espacio de pruebas es un poco grande, se ha tratado de maximizar la cantidad de información por cada gráfico, de manera de no atiborrar la presentación de los resultados. Se dividirá esta sección en tres subsecciones: \textbf{Tiempos en Caso Aleatorio}, \textbf{Tiempos en Caso Degenerado} y la \textbf{Ocupación}.
 
-\subsection{Caso Aleatorio}
+\subsection{Tiempos en Caso Aleatorio}
 \label{subsec:res_aleatorio}
 
 A continuación se exponen los resultados para el caso en que las cadenas insertadas en la estructura fueron generadas aleatoriamente, sin ningún tipo de pre ni postprocesamiento.\\
@@ -265,8 +265,65 @@ A continuación se exponen los resultados para el caso en que las cadenas insert
 \end{center}
 \end{figure}
 
+Como se puede ver, las mediciones relevantes son cuando los elementos en la estructura superan los $2^{16}$, razón por la que los gráficos parten de ese valor. Antes de ello las diferencias son tan mínimas que no vale la pena analizarlas.
 
+\subsection{Tiempos en Caso Degenerado}
+\label{subsec:res_degenerado}
+
+Aquí vale lo mismo que se acaba de decir al final de la subsección anterior, el eje $x$ (tiempo) se escala para mostrar sólo los valores a partir de los cuales la diferencia se hace significativa.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{degenerado_insercion.png}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{degenerado_busquedanormal.png}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{degenerado_busquedacargada.png}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.65]{degenerado_eliminacion.png}
+\end{center}
+\end{figure}
+
+Vale la pena explicar por qué no se incluye la medición para el Árbol de Búsqueda Binaria en este caso.\\
+
+Como ya se dijo en las hipótesis, los ABB en el caso degenerado (esto es, cuando las cadenas se insertan en orden lexicográfico) se convierten en listas enlazadas, asunto que puede no parecer tan importante al principio, pero en la próxima sección se discutirá por qué esto es importante.\\
+
+Resulta, pues, que una medición verídica implica verificar que los resultados obtenidos sean de calidad, o sea, se necesita tomar un promedio sobre las mediciones y minimizar el error. Esto elimina las mediciones ``con suerte'' en las que un algoritmo puede hacerlo muy bien o muy mal. Entonces, lo que pasó con las mediciones para un ABB al principio fue la obtención de un fenómeno bastante conocido llamado \textbf{Segmentation Fault}.\\
+
+Pues bien, la estructura está bien hecha y pasa todos los tests de memoria, por lo que un \emph{segfault} da para pensar. Corriéndolo con \texttt{valgrind}, la herramienta arrojó que el programa había incurrido en un \textbf{Stack Overflow}.\\
+
+Para solucionar un Stack Overflow (o sea, demasiada memoria en el Stack), se puede usar la función \texttt{setrlimit} definida en el header \texttt{sys/resource.h} y aumentar el tamaño máximo del stack para un proceso.\\
+
+El resultado fue lo que sigue (ignore el hecho de que el directorio de trabajo tiene que ver con otro ramo):
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.4]{tiempo_abb_degenerado.png}
+\end{center}
+\end{figure}
+
+Como muestra el comando \texttt{top}, el proceso llevaba 32 minutos sin poder terminar siquiera una iteración. Para una medición certera se debe iterar por lo menos diez veces antes de concluir que no hay error. Asumiendo que el programa terminaba a los 40 minutos (siendo generoso), diez iteraciones hubiesen tomado 400 minutos, que corresponden a 6 horas y 40 minutos.\\
+
+Este resultado ciertamente que será discutido en la interpretación.
+
+\newpage
 \section{Análisis e Interpretación de los Datos}
+
+
+
+\newpage
 \section{Apéndices}
 \subsection{Dominio Básico}
 \label{subsec:apen_dombasico}
@@ -444,6 +501,15 @@ static struct splay_nodo *_splay(struct splay_nodo *nodo, const char *key){
   return _zag(nodo);
 }
 \end{verbatim}
+
+\subsection{Cómo reobtener los gráficos}
+\label{subsec:gnuplot}
+Junto con este informe se ha entregado los sources que permiten compilar y correr el programa, pero si no se tiene acceso a ello, a partir del 17 de Diciembre de 2016 a las 0:00 horas estará disponible el código fuente en https://github.com/anachronic/tarea3-algoritmos, desde donde se podrá clonar el repositorio y los sources vía git, o bien descargarlos en formato \texttt{zip}.\\
+
+Dentro de la carpeta \texttt{graficos/} existe un archivo llamado \texttt{graficar.gp}, que contiene el script para generar todas las imagenes usando \texttt{gnuplot}. Sin embargo, y teniendo en cuenta que los resultados son independientes de la plataforma en la que se grafique, el binario entrega todos los resultados en archivos terminados en \texttt{.dat}, en que los nombres de los archivos indican a qué experimento corresponde. Con esos archivos se puede graficar en cualquier otro programa, con Excel, MATLAB, usando R, o la herramienta de preferencia de la persona interesada en reproducir los experimentos.\\
+
+No obstante, se recomienda usar \texttt{gnuplot}\footnote{http://www.gnuplot.info/}.
+
 
 
 
